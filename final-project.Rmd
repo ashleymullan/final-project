@@ -2,17 +2,17 @@
 title: Title here
 
 author: 
-- name: Jackson
-  affiliation: Department of YYY, University of XXX
+- name: Jackson Gazin
+  affiliation: Department of Statistics, Wake Forest University
   email: abc@def
   
-- name: Author 2
-  affiliation: Department of ZZZ, University of WWW
+- name: Ashley Mullan
+  affiliation: Department of Statistics, Wake Forest University
   email: djf@wef
   
-- name: Author 2
-  affiliation: Department of ZZZ, University of WWW
-  email: djf@wef
+- name: Anh Nguyen
+  affiliation: Department of Statistics, Wake Forest University
+  email: nguyp22@wfu.edu
 
 keywords:
 - key
