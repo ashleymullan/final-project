@@ -93,10 +93,10 @@
 average systolic blood pressure (SBP), mm Hg.}
 
 \author{ Jackson
-Gazin \email{\href{mailto:abc@def}{\nolinkurl{abc@def}}} \\ Department
+Gazin \email{\href{mailto:gazij22@wfu.edu}{\nolinkurl{gazij22@wfu.edu}}} \\ Department
 of Statistics, Wake Forest University  \and
 		 Ashley
-Mullan \email{\href{mailto:djf@wef}{\nolinkurl{djf@wef}}} \\ Department
+Mullan \email{\href{mailto:mullae22@wfu.edu}{\nolinkurl{mullae22@wfu.edu}}} \\ Department
 of Statistics, Wake Forest University  \and
 		 Anh
 Nguyen \email{\href{mailto:nguyp22@wfu.edu}{\nolinkurl{nguyp22@wfu.edu}}} \\ Department
@@ -123,7 +123,11 @@ of Statistics, Wake Forest University
 %  pub the summary here
 
 \begin{abstract}
-The text of your summary. Should not exceed 225 words.
+We investigate the average treatment effect among the treated (ATT) of
+cholesterol-lowering medication on the mean systolic blood pressure (mm
+Hg). Using data from the National Health and Nutrition Examination
+Survey (NHANES), we fit a propensity score model to estimate the ATT
+among adults living in the United States of America.
 \end{abstract}
 
 %
@@ -142,7 +146,84 @@ control.
 \hypertarget{intro}{%
 \section{Introduction}\label{intro}}
 
-Your text comes here. Separate text sections with
+Controlling blood pressure (BP) reduces the risk for cardiovascular
+disease. However, the prevalence of BP control (i.e., systolic BP
+\textless{} 140 and diastolic BP \textless{} 90) among US adults with
+hypertension has decreased since 2013. We invite teams to analyze
+publicly available data from US adults to help identify potential causes
+or correlates of worsening BP control among US adults with hypertension
+over the past decade, as this may allow for development of effective
+interventions to help control BP and prevent cardiovascular disease.
+
+\hypertarget{methods}{%
+\section{Materials and methods}\label{methods}}
+
+\hypertarget{data}{%
+\subsection{Data}\label{data}}
+
+The National Health and Nutrition Examination Survey (NHANES) combines
+interviews and physical examinations to assess the health and
+nutritional status of adults and children in the United States of
+America. The program started in the early 1960s and has been conducted
+every two years since 1999. The survey samples from a nationally
+representative 5,000 persons each year. The participants are located in
+counties across the country, 15 of which are visited each year. The
+interview asks questions about demographic, socioeconomic, dietary, and
+health-related questions. The examination consists of medical, dental,
+physiological measurements, and laboratory tests.
+
+The NHANES dataset we are using can be downloaded from \textbf{cite} .
+The dataset contains information from the survey from 1999 to 2020 with
+a sample of 59,799 rows and 111 chosen columns. Each row is a
+noninstitutionalized US adults participated in the survey between 1999
+and 2020. The columns contain information about demographics, blood
+pressure levels, hypertension status, antihypertensive medication usage,
+and co-morbidities.
+
+For this analysis, \textbf{missing data}
+
+\hypertarget{statistical-methods}{%
+\subsection{Statistical methods}\label{statistical-methods}}
+
+We fit a propensity score model on
+
+\hypertarget{exploratory-data-analysis}{%
+\subsubsection{Exploratory data
+analysis}\label{exploratory-data-analysis}}
+
+\hypertarget{modeling}{%
+\subsubsection{Modeling}\label{modeling}}
+
+\hypertarget{results-results}{%
+\section{Results \{\$results\}}\label{results-results}}
+
+\hypertarget{study-population}{%
+\subsection{Study population}\label{study-population}}
+
+\hypertarget{propensity-score-model}{%
+\subsection{Propensity score model}\label{propensity-score-model}}
+
+\hypertarget{diagnostics}{%
+\paragraph{Diagnostics}\label{diagnostics}}
+
+\hypertarget{average-treatment-effect-among-the-treated}{%
+\subsection{Average treatment effect among the
+treated}\label{average-treatment-effect-among-the-treated}}
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+\hypertarget{supplement}{%
+\section{Supplementary information}\label{supplement}}
+
+The data can be downloaded from GitHub or accessed via the
+cardioStatsUSA R package. For both the file and information about the R
+package, see \url{https://github.com/jhs-hwg/cardioStatsUSA}.
+
+All code for the analysis can be accessed at \textbf{link github}
+
+\hypertarget{acknowledge}{%
+\section{Acknowledgement}\label{acknowledge}}
 
 \hypertarget{sec:1}{%
 \section{Section title}\label{sec:1}}
