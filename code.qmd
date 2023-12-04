@@ -1,8 +1,0 @@
----
-title: "Code and Analysis"
-output: html_notebook
----
-
-```{r}
-#upload data here
-```
