@@ -42,7 +42,7 @@ Description: Data from the US National Health and Nutrition Examination Survey (
 # Data
 
 ```{r}
- #devtools::install_github("jhs-hwg/cardioStatsUSA")
+#devtools::install_github("jhs-hwg/cardioStatsUSA")
 library(cardioStatsUSA)
 data("nhanes_data")
 ```
@@ -89,8 +89,7 @@ chol_med_use ~ chol_total
 
 ```{r}
 dag <- dagify(
-  bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use, 
-  bp_med_use ~ bp_sys_mean,
+  bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use,
   cc_smoke ~ demographics,
   cc_bmi ~ demographics,
   chol_total ~ cc_bmi + demographics,
