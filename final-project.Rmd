@@ -1,5 +1,5 @@
 ---
-title: Title here
+title: Average treatment effect of cholesterol-lowering medication and average systolic blood pressure (SBP), mm Hg.
 
 author: 
 - name: Jackson Gazin
@@ -15,9 +15,9 @@ author:
   email: nguyp22@wfu.edu
 
 keywords:
-- key
-- dictionary
-- word
+- cholesterol-lowering medication
+- systolic blood pressure
+- blood pressure control
 
 abstract: |
   The text of your summary.  Should not exceed 225 words.
