@@ -27,8 +27,9 @@ library(broom)
 library(survey)
 # propensity
 library(propensity)
-# resampling
+# adjusting SEs
 library(rsample)
+library(sandwich)
 # sensitivity
 library(tipr)
 ```
@@ -42,7 +43,7 @@ Description: Data from the US National Health and Nutrition Examination Survey (
 # Data
 
 ```{r}
- #devtools::install_github("jhs-hwg/cardioStatsUSA")
+devtools::install_github("jhs-hwg/cardioStatsUSA")
 library(cardioStatsUSA)
 data("nhanes_data")
 ```
