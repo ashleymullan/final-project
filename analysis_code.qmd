@@ -1,0 +1,129 @@
+---
+title: "STA 779: Final Project"
+format: gfm
+author: "Jackson Gazin, Ashley Mullan, Anh Nguyen"
+date: '2022-03-29'
+---
+
+# Library
+
+```{r}
+#| label: load-pkgs
+#| message: false
+#| warning: false
+# tidyverse
+library(tidyverse)
+# dag
+library(ggdag)
+# eda
+library(skimr)
+library(visdat)
+# plot
+library(halfmoon)
+# table 
+library(gtsummary)
+library(labelled)
+library(broom)
+library(survey)
+# propensity
+library(propensity)
+# resampling
+library(rsample)
+# sensitivity
+library(tipr)
+```
+
+# Problem
+
+Problem statement: Controlling blood pressure (BP) reduces the risk for cardiovascular disease. However, the prevalence of BP control (i.e., systolic BP < 140 and diastolic BP < 90) among US adults with hypertension has decreased since 2013. We invite teams to analyze publicly available data from US adults to help identify potential causes or correlates of worsening BP control among US adults with hypertension over the past decade, as this may allow for development of effective interventions to help control BP and prevent cardiovascular disease.
+
+Description: Data from the US National Health and Nutrition Examination Survey (NHANES) containing information about demographics, blood pressure levels, hypertension status, antihypertensive medication usage, and co-morbidities for a sample of 59,799 noninstitutionalized US adults collected between 1999 and 2020.
+
+# Data
+
+```{r}
+ #devtools::install_github("jhs-hwg/cardioStatsUSA")
+library(cardioStatsUSA)
+data("nhanes_data")
+```
+
+```{r}
+data(nhanes_key)
+```
+
+
+# EDA
+
+```{r}
+# shiny to explore data
+app_run()
+```
+
+
+# Causal question
+
+# Causal Diagram
+
+from literature, ways to control blood pressure:
+
+bp control ~ exercise + white coat effect + pharmacotherapy + diet + sodium + alcohol + smoking + sleep + stress + regular health check up
+
+causal questions:
+
+For noninstitutionalized US adults in the NHANES dataset collected between 1999 and 2020, does using cholesterol-lowering medication affects blood pressure control?
+
+using variables from data set:
+
+outcome: bp_sys_mean, bp_dia_mean (might only choose one)
+exposure: chol_med_use
+
+let demographics = age + race + gender + pregnant
+
+bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use 
+bp_med_use ~ bp_sys_mean
+cc_smoke ~ demographics 
+cc_bmi ~ demographics 
+chol_total ~ cc_bmi + demographics 
+chol_med_use ~ chol_total 
+
+
+```{r}
+dag <- dagify(
+  bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use, 
+  bp_med_use ~ bp_sys_mean,
+  cc_smoke ~ demographics,
+  cc_bmi ~ demographics,
+  chol_total ~ cc_bmi + demographics,
+  chol_med_use ~ chol_total,
+  exposure = "chol_med_use",
+  outcome = "bp_sys_mean",
+  labels = c(
+    bp_sys_mean = "systolic blood pressure",
+    bp_med_use = "antihypertensive medication",
+    cc_smoke = "smoking",
+    cc_bmi = "bmi",
+    chol_total = "total cholesterol",
+    demographics = "demographics",
+    chol_med_use = "cholesterol-lowering medication"
+  )
+)
+
+ggdag(dag, use_labels = "label", text = FALSE) +
+  theme_dag()
+```
+
+
+```{r}
+ggdag_adjustment_set(
+  dag,
+  use_labels = "label",
+  text = FALSE
+)
+```
+
+
+# Propensity score
+
+# Diagnostics
+
+# Sensitivity analysis
