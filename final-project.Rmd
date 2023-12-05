@@ -37,19 +37,28 @@ Controlling blood pressure (BP) reduces the risk for cardiovascular disease. How
 
 # Materials and methods {#methods}
 
+
+
 ## Data
 
 The National Health and Nutrition Examination Survey (NHANES) combines interviews and physical examinations to assess the health and nutritional status of adults and children in the United States of America. The program started in the early 1960s and has been conducted every two years since 1999. The survey samples from a nationally representative 5,000 persons each year. The participants are located in counties across the country, 15 of which are visited each year. The interview asks questions about demographic, socioeconomic, dietary, and health-related questions. The examination consists of medical, dental, physiological measurements, and laboratory tests.
 
 The NHANES dataset we are using can be downloaded from __cite__ . The dataset contains information from the survey from 1999 to 2020 with a sample of 59,799 rows and 111 chosen columns. Each row is a noninstitutionalized US adults participated in the survey between 1999 and 2020. The columns contain information about demographics, blood pressure levels, hypertension status, antihypertensive medication usage, and co-morbidities. 
 
-For this analysis, __missing data__
+For this analysis, we had 38977 rows with NA values. We decided to deal with this by removing all the na values. We decided this was preferable to removing certain columns since we were still left with 20,822 data points which is still an extremely large data set. 
+
+
 
 ## Statistical methods
 
-We fit a propensity score model on 
+We fit a propensity score model withTotal cholesterol, mg/dL  as our explanatory variable since this was the only variable and our taking cholesterol medication as our response variable since this is our exposure variable.  We fit our propensity score model with a Logistic Regression model.  We then fit our outcome model to estimate the average treatment effect among the treated with a linear regression model with  cholesterol medication  as our explanatory variable and Systolic blood pressure (SBP), mm Hg as our response variable. We use a weighted mirrored histogram, ECDF plots, and Love Plots to check our the appropriateness of our propensity score model to proceed with our final model. 
+
+
+
 
 ### Exploratory data analysis
+
+
 
 ### Modeling
 
@@ -57,9 +66,15 @@ We fit a propensity score model on
 
 ## Study population
 
-## Propensity score model
+We aim answer our causal question by fitting an average treatment effect among the treated. Our causal question is as follows: Among those who take cholesterol lowering medication, does taking this cholesterol lowering medication change their systolic blood pressure?
 
-#### Diagnostics
+## Propensity score model and Diagnostics 
+
+We fit a propensity score model with total cholesterol, mg/dL  as our explanatory variable since this was the only variable and our taking cholesterol medication as our response variable since this is our exposure variable.  We fit our propensity score model with a Logistic Regression model. We then examined a Mirrored Histogram of our propensity scores across both exposure groups. As we can see in the table below, we have significant overlap for the propensity scores across both groups. This suggests very little evidence of having a positivity violation in our model which is great. 
+
+We then used our propensity score model to generate our average treatment affect among the treated weights. We generated these weights since they matched our causal question.
+
+
 
 ## Average treatment effect among the treated
 
