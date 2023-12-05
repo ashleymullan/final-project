@@ -32,6 +32,7 @@ library(rsample)
 library(sandwich)
 # sensitivity
 library(tipr)
+
 ```
 
 # Problem
@@ -43,7 +44,7 @@ Description: Data from the US National Health and Nutrition Examination Survey (
 # Data
 
 ```{r}
-devtools::install_github("jhs-hwg/cardioStatsUSA")
+#devtools::install_github("jhs-hwg/cardioStatsUSA")
 library(cardioStatsUSA)
 data("nhanes_data")
 ```
@@ -124,7 +125,118 @@ ggdag_adjustment_set(
 
 
 # Propensity score
+```{r}
+#check the vibes to think about an estimator
 
-# Diagnostics
+nhanes_data |> 
+  drop_na() |>
+  ggplot(aes(fill = chol_med_use, x = bp_sys_mean)) +
+  geom_mirror_histogram()
+
+data <- nhanes_data |> 
+  as.data.frame() |> 
+  drop_na() |>
+  select(chol_med_use, chol_total, bp_sys_mean)
+
+prop <- glm(chol_med_use ~ chol_total, 
+    data = data,
+    family = binomial())
+data <- prop |> 
+  augment(type.predict = "response", data = data)  |>
+  select(-c(.resid, .hat, .sigma, .cooksd, .std.resid)) |>
+  rename("prop" = ".fitted")
+data <- data |>
+  mutate(w_att = wt_att(prop, chol_med_use))
+
+```
+
+Check the Propensity Model
+```{r}
+uw_mirror <- data |> 
+  ggplot(aes(x = prop, 
+             group = chol_med_use, 
+             fill = chol_med_use)) +
+  geom_mirror_histogram(bins = 20) +
+  theme_bw() +
+  labs(x = "Propensity Score",
+       y = "Count",
+       fill = "Uses Cholesterol Medication?",
+       title = "no positivity violations!",
+       subtitle = "(no weighting)") +
+  scale_fill_manual(values = c("blue", "magenta"))
+
+uw_mirror
+
+w_mirror <- data |>
+  ggplot(aes(x = prop, fill = chol_med_use)) +
+  geom_mirror_histogram(
+    aes(fill = chol_med_use,
+        weight = w_att),
+    binwidth = 0.05) +
+  scale_fill_manual(values = c("#006241", "#cba258")) +
+  scale_y_continuous(labels = abs) +
+  theme_bw() +
+  labs(x = "Propensity Score",
+       fill = "Uses Cholesterol Medication?",
+       y = "Count",
+       title = "no positivity violations",
+       subtitle = "ATT Weighting")
+
+w_mirror
+
+smds <- tidy_smd(
+  data,
+  .vars = c(chol_total),
+  .group = chol_med_use,
+  .wts = w_att
+)
+
+love <- smds |>
+  ggplot(aes(x = abs(smd), y = variable,
+             group = method, color = method)) +
+  geom_love() + 
+  theme_bw() +
+  labs(title = "Love Plot: Examining SMDs")
+
+love #no problems here, weighting corrects SMD
+
+ecdf <- data |>
+  ggplot(aes(x = chol_total, color = chol_med_use)) +
+  geom_ecdf(aes(weights = w_att)) +
+  scale_color_manual(
+    "Uses Cholesterol Medication?",
+    values = c("#FF69B4", "#013220"),
+    labels = c("Y", "N")) +
+    labs(x = "Total Cholesterol", y = "Prop <= X",
+           title = "Weighted ECDF") +
+  theme_bw() 
+
+ecdf #no issues here
+```
+
+Outcome Model
+```{r}
+outcome_mod <- lm(bp_sys_mean ~ chol_med_use, data = data, weights = w_att)
+robust_var <- sandwich(outcome_mod)[2, 2]
+point_est <- coef(outcome_mod)[2]
+lb <- round(point_est - 1.96 * sqrt(robust_var),3)
+ub <- round(point_est + 1.96 * sqrt(robust_var),3)
+paste0("The point estimate for the ATT is ", round(point_est,3), " with 95% CI (", lb, ",", ub,").")
+```
 
 # Sensitivity analysis
+```{r}
+tip_coef_with_continuous(
+  effect_observed = 8.578, #lower bound of CI
+  exposure_confounder_effect = c(0.05, 0.10, 0.15),
+  verbose = FALSE
+)
+```
+Verbiage for sensitivity:
+The estimated effect assumes a correct DAG. However, it is possible that we did not include all possible confounding variables in the DAG. To counter this, we run sensitivity analysis on the estimated ATT. Specifically, we compute the necessary relationship between an unmeasured confounder and the outcome of weight change required to tip the lower bound of the confidence interval to the null at the 5% level. We try exposure confounder effects of size 0.05, 0.10, and 0.15, and these require confounder-outcome effects of 172, 85, and 57 respectively to tip the interval. As the smallest of these is over 6 times the estimated effect, it is reasonable to say that the ATT we computed is resistant to confounding.
+
+
+#Causal Question Verbiage
+Among those who take cholesterol medication, does stopping the medication have an effect on systolic blood pressure?
+
+
