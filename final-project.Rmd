@@ -37,19 +37,32 @@ Controlling blood pressure (BP) reduces the risk for cardiovascular disease. How
 
 # Materials and methods {#methods}
 
+
+
 ## Data
 
 The National Health and Nutrition Examination Survey (NHANES) combines interviews and physical examinations to assess the health and nutritional status of adults and children in the United States of America. The program started in the early 1960s and has been conducted every two years since 1999. The survey samples from a nationally representative 5,000 persons each year. The participants are located in counties across the country, 15 of which are visited each year. The interview asks questions about demographic, socioeconomic, dietary, and health-related questions. The examination consists of medical, dental, physiological measurements, and laboratory tests.
 
 The NHANES dataset we are using can be downloaded from __cite__ . The dataset contains information from the survey from 1999 to 2020 with a sample of 59,799 rows and 111 chosen columns. Each row is a noninstitutionalized US adults participated in the survey between 1999 and 2020. The columns contain information about demographics, blood pressure levels, hypertension status, antihypertensive medication usage, and co-morbidities. 
 
-For this analysis, __missing data__
+For this analysis, we had 38977 rows with NA values. We decided to deal with this by removing all the na values. We decided this was preferable to removing certain columns since we were still left with 20,822 data points which is still an extremely large data set. 
+
+
 
 ## Statistical methods
 
-We fit a propensity score model on 
+We fitted a propensity score model with "Total cholesterol" in mg/dL as our explanatory variable since this was the only variable, and "taking cholesterol medication" as our response variable, as it represents our exposure variable. We employed a Logistic Regression model for the propensity score model.
+
+Subsequently, we used the propensity score model to fit our outcome model, estimating the average treatment effect among the treated. We utilized a linear regression model with "cholesterol medication" as our explanatory variable and "Systolic blood pressure (SBP)" in mm Hg as our response variable.
+
+To assess the appropriateness of our propensity score model and proceed with our final model, we employed weighted mirrored histograms, ECDF plots, and Love Plots.
+
+
+
 
 ### Exploratory data analysis
+
+
 
 ### Modeling
 
@@ -57,11 +70,22 @@ We fit a propensity score model on
 
 ## Study population
 
-## Propensity score model
+We aim answer our causal question by fitting an average treatment effect among the treated. Our causal question is as follows: Among those who take cholesterol lowering medication, does taking this cholesterol lowering medication change their systolic blood pressure?
 
-#### Diagnostics
+## Propensity score model and Diagnostics 
+We fitted a propensity score model with "total cholesterol" in mg/dL as our explanatory variable and "taking cholesterol medication" as our response variable. We employed a Logistic Regression model for this purpose. Subsequently, we examined a Mirrored Histogram of our propensity scores for both exposure groups. The table below demonstrates significant overlap in propensity scores across both groups, indicating very little evidence of a positivity violation in our model, which is promising.
+
+Next, we used our propensity score model to generate weights for the average treatment effect among the treated (ATT), aligning with our causal question. To assess the appropriateness of our propensity score model and the resulting weights, we created a Weighted Mirror Histogram of our propensity scores. As shown below, we achieved sufficient balance between the exposed and unexposed groups. Furthermore, the distribution of the unexposed group now resembles that of the exposed group, which is the desired outcome when using ATT weights.
+
+We also generated a love plot, displaying the standardized mean difference changes for the exposed and unexposed groups regarding our "total cholesterol" variable in both unweighted and weighted data. As expected, our weighted data exhibit a standardized mean difference of 0 for the "total cholesterol" variable, which is ideal and allows us to proceed.
+
+Finally, we created a weighted empirical cumulative distribution function (eCDF) plot for our continuous variable, "total cholesterol." As shown below, the Weighted ECDF plot indicates balance not only in the mean across exposure groups but also across their respective distributions. No changes are required for our model, and we can now proceed to estimate our average treatment effect among the treated.
+
 
 ## Average treatment effect among the treated
+
+We estimated the average treatment effect of taking cholesterol-lowering medication. Our findings indicate that, on average, individuals who take cholesterol-lowering medication experience an increase of 9.26 mm Hg in their Systolic Blood Pressure (SBP). We are 95 percent confident that the average effect of taking this medication on SBP falls within the range of at least 8.578 mm Hg to at most 9.941 mm Hg. Additionally, we conducted a sensitivity analysis to account for the possibility that our Directed Acyclic Graph (DAG) might not include all potential confounding variables. In this analysis, we calculated the necessary relationship between an unmeasured confounder and the change in weight required to shift the lower bound of the confidence interval to the null hypothesis level (5%). We considered exposure confounder effects of sizes 0.05, 0.10, and 0.15, which would necessitate confounder-outcome effects of 172, 85, and 57, respectively, to influence the interval. The smallest of these values, 57, is over 6 times greater than the estimated treatment effect. Therefore, it is reasonable to conclude that the Average Treatment Effect (ATT) we computed is robust against potential confounding factors.
+
 
 # Discussion {#discussion}
 
