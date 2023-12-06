@@ -113,6 +113,7 @@ dag <- dagify(
     chol_med_use = "cholesterol-lowering medication"
   )
 )
+ggsave("dag.png")
 
 ggdag(dag, use_labels = "label", text = FALSE) +
   theme_dag()
@@ -183,10 +184,11 @@ w_mirror <- data |>
   labs(x = "Propensity Score",
        fill = "Uses Cholesterol Medication?",
        y = "Count",
-       title = "no positivity violations",
+       title = "Weighted Sample Distributions",
        subtitle = "ATT Weighting")
 
 w_mirror
+ggsave("mirror.png")
 
 smds <- tidy_smd(
   data,
@@ -203,6 +205,7 @@ love <- smds |>
   labs(title = "Love Plot: Examining SMDs")
 
 love #no problems here, weighting corrects SMD
+ggsave("love.png")
 
 ecdf <- data |>
   ggplot(aes(x = chol_total, color = chol_med_use)) +
@@ -216,6 +219,7 @@ ecdf <- data |>
   theme_bw() 
 
 ecdf #no issues here
+ggsave("ecdf.png")
 ```
 
 Outcome Model
