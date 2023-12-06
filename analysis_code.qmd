@@ -83,7 +83,7 @@ using variables from data set:
 outcome: bp_sys_mean, bp_dia_mean (might only choose one)
 exposure: chol_med_use
 
-let demographics = age + race + gender + pregnant
+let demographics = age + race + gender
 
 bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use 
 bp_med_use ~ bp_sys_mean
@@ -96,11 +96,10 @@ chol_med_use ~ chol_total
 ```{r}
 dag <- dagify(
   bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use, 
-  bp_med_use ~ bp_sys_mean,
   cc_smoke ~ demographics,
   cc_bmi ~ demographics,
   chol_total ~ cc_bmi + demographics,
-  chol_med_use ~ chol_total,
+  chol_med_use ~ chol_total + demographics + cc_bmi + bp_med_use,
   exposure = "chol_med_use",
   outcome = "bp_sys_mean",
   labels = c(
@@ -113,10 +112,12 @@ dag <- dagify(
     chol_med_use = "cholesterol-lowering medication"
   )
 )
-ggsave("dag.png")
+
 
 ggdag(dag, use_labels = "label", text = FALSE) +
   theme_dag()
+
+ggsave("dag.png")
 ```
 
 
@@ -141,9 +142,10 @@ nhanes_data |>
 data <- nhanes_data |> 
   as.data.frame() |> 
   drop_na() |>
-  select(chol_med_use, chol_total, bp_sys_mean)
+  mutate(log_age = log(demo_age_years)) |>
+  select(chol_med_use, chol_total, bp_sys_mean, bp_med_use, cc_bmi, log_age, demo_race, demo_gender)
 
-prop <- glm(chol_med_use ~ chol_total, 
+prop <- glm(chol_med_use ~ chol_total + bp_med_use + cc_bmi + log_age + demo_race + demo_gender, 
     data = data,
     family = binomial())
 data <- prop |> 
@@ -151,7 +153,7 @@ data <- prop |>
   select(-c(.resid, .hat, .sigma, .cooksd, .std.resid)) |>
   rename("prop" = ".fitted")
 data <- data |>
-  mutate(w_att = wt_att(prop, chol_med_use))
+  mutate(w_att = wt_att(prop, chol_med_use)) 
 
 ```
 
@@ -192,7 +194,7 @@ ggsave("mirror.png")
 
 smds <- tidy_smd(
   data,
-  .vars = c(chol_total),
+  .vars = c(chol_total, cc_bmi, log_age),
   .group = chol_med_use,
   .wts = w_att
 )
@@ -218,7 +220,7 @@ ecdf <- data |>
            title = "Weighted ECDF") +
   theme_bw() 
 
-ecdf #no issues here
+ecdf #only minor issues here
 ggsave("ecdf.png")
 ```
 
@@ -235,13 +237,13 @@ paste0("The point estimate for the ATT is ", round(point_est,3), " with 95% CI (
 # Sensitivity analysis
 ```{r}
 tip_coef_with_continuous(
-  effect_observed = 8.578, #lower bound of CI
+  effect_observed = -2.71, #upper bound of CI
   exposure_confounder_effect = c(0.05, 0.10, 0.15),
   verbose = FALSE
 )
 ```
 Verbiage for sensitivity:
-The estimated effect assumes a correct DAG. However, it is possible that we did not include all possible confounding variables in the DAG. To counter this, we run sensitivity analysis on the estimated ATT. Specifically, we compute the necessary relationship between an unmeasured confounder and the outcome of weight change required to tip the lower bound of the confidence interval to the null at the 5% level. We try exposure confounder effects of size 0.05, 0.10, and 0.15, and these require confounder-outcome effects of 172, 85, and 57 respectively to tip the interval. As the smallest of these is over 6 times the estimated effect, it is reasonable to say that the ATT we computed is resistant to confounding.
+The estimated effect assumes a correct DAG. However, it is possible that we did not include all possible confounding variables in the DAG. To counter this, we run sensitivity analysis on the estimated ATT. Specifically, we compute the necessary relationship between an unmeasured confounder and the outcome of weight change required to tip the lower bound of the confidence interval to the null at the 5% level. We try exposure confounder effects of size 0.05, 0.10, and 0.15, and these require confounder-outcome effects of BLAH to tip the interval. As the smallest of these is over 6 times the estimated effect, it is reasonable to say that the ATT we computed is resistant to confounding.
 
 
 #Causal Question Verbiage
