@@ -20,18 +20,22 @@ include-in-header:
 
 ## Problem Statement {.center}
 
-Among those who take cholesterol lowering medication, does taking this cholesterol lowering medication change their systolic blood pressure?
+Among those who take cholesterol lowering medication, does taking this **medication** have an effect on their **systolic blood pressure**?
 
 ::: {.notes}
 up next: background
 :::
 
-## Background
-  - Controlling blood pressure (BP) reduces the risk for cardiovascular disease. 
-  - Ways to control blood pressure include **exercise**, the **white coat effect**, **pharmacotherapy**, **a healthy diet**, **regulating sodium**, **reducing alcohol use**, **smoking**, **getting sleep**, **reducing stress**, and **regular health check-ups**.
-  - **<span style="color:#E5B80B;"> ANH PUT ANY OTHER LIT STUFF HERE </span>** 
+## Background {.smaller .center}
+  - Controlling blood pressure reduces the risk for cardiovascular disease. 
+  - Systolic above 130 mmHg is considered to be hypertensive.
+  - Doctors often prescribe both antihypertensive and cholesterol-lowering drugs, as patients with high blood pressure often have high cholesterol.
+  - Ways to control blood pressure include exercise, pharmacotherapy, a healthy diet, regulating sodium, reducing alcohol use, smoking, getting sleep, reducing stress, and regular health check-ups.
   
 ::: {.notes}
+
+Cholesterol plague and calcium cause your arteries to become hard and narrow. Statin has been proven to be effective in minimizing the risk of cardiovascular adverse events.
+
 up next: We drew a DAG to represent the context.
 :::
   
@@ -45,7 +49,7 @@ up next: We drew a DAG to represent the context.
 up next: Using this DAG, we attempted to answer the question with causal methods
 :::
 
-## Statistical Analysis
+## Statistical Analysis {.center}
   - Clean the dataset
   - Build a propensity model and ATT weights 
   - Run diagnostics on the propensity model
@@ -56,10 +60,10 @@ up next: Using this DAG, we attempted to answer the question with causal methods
 up next: results
 :::
 
-## Key Results {.smaller}
-  - The cleaned data had 20,822 rows and 3 columns after deriving $X, Y, \boldsymbol{Z}$ from our adjustment set and dropping missing values.
+## Key Results {.smaller .center}
+  - The cleaned data had 20,822 rows and 8 columns after deriving $X, Y, \boldsymbol{Z}$ from our adjustment set and dropping missing values.
   - The propensity model and ATT weighting produced data that was balanced.
-  - Using a sandwich estimator to derive the standard errors, we observe an ATT of 9.26 with 95% CI (8.578,9.941).
+  - Using a sandwich estimator to derive the standard errors, we observe an ATT of -3.746 with 95% CI (-4.782,-2.71).
   - A conservative unmeasured confounding variable setup would require an effect size of over 6 times the ATT to tip the CI to the null at the 95% level.
   
 ::: {.notes}
@@ -85,12 +89,16 @@ up next: diagnostic plots
   <img src="ecdf.png" alt="Your Image" style="width: 50%;" />
 </div>
 
+::: {.notes}
 notes: we assume missing at random
 X is cholesterol med use, Z is total cholesterol, Y is mean blood pressure
 up next: diagnostic plots
 :::
 
-## Conclusion
- **<span style="color:#E5B80B;"> JACKSON PLEASE PUT CONCLUSION HERE </span>** 
+## Conclusion {.center}
+Given our observed ATT of -3.746 with 95% CI (-4.782,-2.71), we conclude that those currently taking medication should continue to take this medication, as it lowers their systolic blood pressure.
 
+::: {.notes}
+notes: limitations include that some of those confounders we address had to be absorbed into the sensitivity analysis
+:::
 
