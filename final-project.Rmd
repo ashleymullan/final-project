@@ -15,8 +15,8 @@ author:
   email: nguyp22@wfu.edu
 
 keywords:
-- cholesterol-lowering medication
-- systolic blood pressure
+- cholesterol-lowering medication,
+- systolic blood pressure,
 - blood pressure control
 
 abstract: |
@@ -31,22 +31,79 @@ referee: true # Papers submitted to Biometrics should ALWAYS be prepared
               # two column-format
 ---
 
+```{r include=FALSE}
+#| label: load-pkgs
+#| message: false
+#| warning: false
+# tidyverse
+library(tidyverse)
+# dag
+library(ggdag)
+# eda
+library(skimr)
+library(visdat)
+# plot
+library(halfmoon)
+# table 
+library(gtsummary)
+library(labelled)
+library(broom)
+library(survey)
+# propensity
+library(propensity)
+# adjusting SEs
+library(rsample)
+library(sandwich)
+# sensitivity
+library(tipr)
+# data
+library(cardioStatsUSA)
+data("nhanes_data")
+```
+
+
 # Introduction {#intro}
 
-Controlling blood pressure (BP) reduces the risk for cardiovascular disease. However, the prevalence of BP control (i.e., systolic BP < 140 and diastolic BP < 90) among US adults with hypertension has decreased since 2013. We invite teams to analyze publicly available data from US adults to help identify potential causes or correlates of worsening BP control among US adults with hypertension over the past decade, as this may allow for development of effective interventions to help control BP and prevent cardiovascular disease.
+__overview of bp control and motivate why we need to control it__
+
+Controlling blood pressure (BP) reduces the risk for cardiovascular disease. However, the prevalence of BP control (i.e., systolic BP < 140 and diastolic BP < 90) among US adults with hypertension has decreased since 2013. 
+
+__why we are looking at cholesterol-lowering medication as an exposure__
+
+High blood pressure (hypertension) and high cholesterol are linked. Cholesterol plaque and calcium cause your arteries to become hard and narrow. So, your heart has to strain much harder to pump blood through them. As a result, your blood pressure becomes too high. 
+
+The prescription of both antihypertensive and cholesterol-lowering drugs is generally required for these patients. Doctors often prescribe statin drugs like atorvastatin (Lipitor), rosuvastatin (Crestor, Ezallor) and simvastatin (Zocor, FloLipid) for patients with high cholesterol.
+
+Under the current guidelines:
+
+Normal: Less than 120/80
+Elevated: Systolic between 120-129 and diastolic less than 80
+Stage 1 hypertension: Systolic between 130-139 or diastolic between 80-89
+
+
+Statin (a chemical in cholesterol-lowering medication) have been proven to be effective in minimizing the risk of cardiovascular adverse events. Statins block a substance the liver needs to make cholesterol. Thus statins have the potential to lower blood pressure (BP). In many cases, simultaneously lower blood pressure and cholesterol level
+
+
+
+__other studies that have look at the same thing__
+
+__explain our dags and why we include thing__
+
+__add short summary of methods here__
+
+Using a causal analysis approach, we aim to explore whether taking cholesterol-lowering medication have the potential to lower blood pressure. By analyzing the publicly available National Health and Nutrition Examination Survey (NHANES), we will estimate the average treatment effect among those who take  cholesterol-lowering medication. Our primary outcome is mean systolic blood pressure (DBP).
+
+__add short summary of results here__
 
 # Materials and methods {#methods}
-
-
 
 ## Data
 
 The National Health and Nutrition Examination Survey (NHANES) combines interviews and physical examinations to assess the health and nutritional status of adults and children in the United States of America. The program started in the early 1960s and has been conducted every two years since 1999. The survey samples from a nationally representative 5,000 persons each year. The participants are located in counties across the country, 15 of which are visited each year. The interview asks questions about demographic, socioeconomic, dietary, and health-related questions. The examination consists of medical, dental, physiological measurements, and laboratory tests.
 
-The NHANES dataset we are using can be downloaded from __cite__ . The dataset contains information from the survey from 1999 to 2020 with a sample of 59,799 rows and 111 chosen columns. Each row is a noninstitutionalized US adults participated in the survey between 1999 and 2020. The columns contain information about demographics, blood pressure levels, hypertension status, antihypertensive medication usage, and co-morbidities. 
+The NHANES dataset we are using can be downloaded from __cite__ . The dataset contains information from the survey from 1999 to 2020 with a sample of 59,799 rows and 111 chosen columns. Each row is a noninstitutionalized US adults participated in the survey between 1999 and 2020. Tahe columns contain information about demographics, blood pressure levels, hypertension status, antihypertensive medication usage, and co-morbidities. 
 
 For this analysis, we had 38977 rows with NA values. We decided to deal with this by removing all the na values. We decided this was preferable to removing certain columns since we were still left with 20,822 data points which is still an extremely large data set. 
-
 
 
 ## Statistical methods
@@ -57,8 +114,44 @@ Subsequently, we used the propensity score model to fit our outcome model, estim
 
 To assess the appropriateness of our propensity score model and proceed with our final model, we employed weighted mirrored histograms, ECDF plots, and Love Plots.
 
+### Causal directed acyclic graphs
 
+We visualize the assumptions that we’re making about the causal relationships between the use of cholesterol-lowering medication (the exposure), the mean systolic blood pressure (the outcome), and other possible confounders in the data set.
 
+```{r fig_dag, fig.width = 4, fig.height = 4, fig.cap = "Causal direct acyclic graph between cholesterol-lowering medication and the mean systolic blood pressure", echo = FALSE, dev = "pdf"}
+dag <- dagify(
+  bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use, 
+  bp_med_use ~ bp_sys_mean,
+  cc_smoke ~ demographics,
+  cc_bmi ~ demographics,
+  chol_total ~ cc_bmi + demographics,
+  chol_med_use ~ chol_total,
+  exposure = "chol_med_use",
+  outcome = "bp_sys_mean",
+  labels = c(
+    bp_sys_mean = "systolic blood pressure",
+    bp_med_use = "antihypertensive medication",
+    cc_smoke = "smoking",
+    cc_bmi = "bmi",
+    chol_total = "total cholesterol",
+    demographics = "demographics",
+    chol_med_use = "cholesterol-lowering medication"
+  )
+)
+
+ggdag(dag, use_labels = "label", text = FALSE) +
+  theme_dag()
+```
+
+Given our assumptions, we need to adjust for the following adjustment set.
+
+```{r fig_adjustment, fig.width = 4, fig.height = 4, fig.cap = "Causal adjustment set", echo = FALSE, dev = "pdf"}
+ggdag_adjustment_set(
+  dag,
+  use_labels = "label",
+  text = FALSE
+)
+```
 
 ### Exploratory data analysis
 
@@ -72,7 +165,13 @@ To assess the appropriateness of our propensity score model and proceed with our
 
 We aim answer our causal question by fitting an average treatment effect among the treated. Our causal question is as follows: Among those who take cholesterol lowering medication, does taking this cholesterol lowering medication change their systolic blood pressure?
 
+```{r}
+
+```
+
+
 ## Propensity score model and Diagnostics 
+
 We fitted a propensity score model with "total cholesterol" in mg/dL as our explanatory variable and "taking cholesterol medication" as our response variable. We employed a Logistic Regression model for this purpose. Subsequently, we examined a Mirrored Histogram of our propensity scores for both exposure groups. The table below demonstrates significant overlap in propensity scores across both groups, indicating very little evidence of a positivity violation in our model, which is promising.
 
 Next, we used our propensity score model to generate weights for the average treatment effect among the treated (ATT), aligning with our causal question. To assess the appropriateness of our propensity score model and the resulting weights, we created a Weighted Mirror Histogram of our propensity scores. As shown below, we achieved sufficient balance between the exposed and unexposed groups. Furthermore, the distribution of the unexposed group now resembles that of the exposed group, which is the desired outcome when using ATT weights.
@@ -89,6 +188,12 @@ We estimated the average treatment effect of taking cholesterol-lowering medicat
 
 # Discussion {#discussion}
 
+## Limitation
+
+will make lifestyle changes rather than take medication
+
+not time sensitive
+
 # Supplementary information {#supplement}
 
 The data can be downloaded from GitHub or accessed via the cardioStatsUSA R package. For both the file and information about the R package, see https://github.com/jhs-hwg/cardioStatsUSA.
@@ -96,6 +201,8 @@ The data can be downloaded from GitHub or accessed via the cardioStatsUSA R pack
 All code for the analysis can be accessed at __link github__
 
 # Acknowledgement {#acknowledge}
+
+Thank Dr. Lucy D'Agostino McGowan for her guidance and assistance in preparing this manuscript.
 
 # Section title {#sec:1}
 
@@ -125,13 +232,13 @@ Inline equations: $\sum_{i = 2}^\infty\{\alpha_i^\beta\}$
 
 # Figures and tables
 
-
 ## Figures coming from R
 
 #### Normal figure embedded in text
 
 ```{r fig2, fig.width = 4, fig.height = 4, fig.cap = "Output from `pdf()`", echo = FALSE, dev = "pdf"}
-plot(runif(25) ~ runif(25))
+ggdag(dag, use_labels = "label", text = FALSE) +
+  theme_dag()
 ```
 
 \clearpage

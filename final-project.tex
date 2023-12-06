@@ -137,7 +137,7 @@ among adults living in the United States of America.
 %
 
 \begin{keywords}
-cholesterol-lowering medicationsystolic blood pressureblood pressure
+cholesterol-lowering medication,systolic blood pressure,blood pressure
 control.
 \end{keywords}
 
@@ -176,7 +176,7 @@ The NHANES dataset we are using can be downloaded from \textbf{cite} .
 The dataset contains information from the survey from 1999 to 2020 with
 a sample of 59,799 rows and 111 chosen columns. Each row is a
 noninstitutionalized US adults participated in the survey between 1999
-and 2020. The columns contain information about demographics, blood
+and 2020. Tahe columns contain information about demographics, blood
 pressure levels, hypertension status, antihypertensive medication usage,
 and co-morbidities.
 
@@ -203,6 +203,31 @@ as our response variable.
 To assess the appropriateness of our propensity score model and proceed
 with our final model, we employed weighted mirrored histograms, ECDF
 plots, and Love Plots.
+
+\hypertarget{causal-directed-acyclic-graphs}{%
+\subsubsection{Causal directed acyclic
+graphs}\label{causal-directed-acyclic-graphs}}
+
+We visualize the assumptions that we're making about the causal
+relationships between the use of cholesterol-lowering medication (the
+exposure), the mean systolic blood pressure (the outcome), and other
+possible confounders in the data set.
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_dag-1.pdf}
+\caption{Causal direct acyclic graph between cholesterol-lowering
+medication and the mean systolic blood pressure}
+\end{figure}
+
+Given our assumptions, we need to adjust for the following adjustment
+set.
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_adjustment-1.pdf}
+\caption{Causal adjustment set}
+\end{figure}
 
 \hypertarget{exploratory-data-analysis}{%
 \subsubsection{Exploratory data
@@ -296,6 +321,9 @@ All code for the analysis can be accessed at \textbf{link github}
 \hypertarget{acknowledge}{%
 \section{Acknowledgement}\label{acknowledge}}
 
+Thank Dr.~Lucy D'Agostino McGowan for her guidance and assistance in
+preparing this manuscript.
+
 \hypertarget{sec:1}{%
 \section{Section title}\label{sec:1}}
 
@@ -336,11 +364,6 @@ Inline equations: \(\sum_{i = 2}^\infty\{\alpha_i^\beta\}\)
 \hypertarget{normal-figure-embedded-in-text}{%
 \paragraph{Normal figure embedded in
 text}\label{normal-figure-embedded-in-text}}
-
-\begin{verbatim}
-## Warning in plot.formula(runif(25) ~ runif(25)): the formula 'runif(25) ~
-## runif(25)' is treated as 'runif(25) ~ 1'
-\end{verbatim}
 
 \begin{figure}
 \centering

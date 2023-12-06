@@ -1,5 +1,20 @@
 \begin{figure}
 \centering
+\includegraphics{final-project_files/figure-latex/fig_dag-1.pdf}
+\caption{Causal direct acyclic graph between cholesterol-lowering
+medication and the mean systolic blood pressure}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_adjustment-1.pdf}
+\caption{Causal adjustment set}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
 \includegraphics{final-project_files/figure-latex/fig2-1.pdf}
 \caption{Output from \texttt{pdf()}}
 \end{figure}

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.12.4)  5 DEC 2023 16:13
+=======
 This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.12.6)  6 DEC 2023 07:57
+>>>>>>> e733bfb882194feb71dc50a1aeef43a24659ee31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -623,12 +627,24 @@ l.189 ...ical methods}\label{statistical-methods}}
                                                    [1
 
 ]
+<<<<<<< HEAD
+\openout3 = `final-project.fff'.
+
+(final-project.fff)
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 240.
+(/home/nguyp22/.TinyTeX/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 240.
+=======
 LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 215.
 (/home/mullae22/.TinyTeX/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 215.
+>>>>>>> e733bfb882194feb71dc50a1aeef43a24659ee31
 
 Overfull \hbox (4.62497pt too wide) has occurred while \output is active
 \OT1/cmr/m/n/9 2
@@ -645,9 +661,12 @@ Overfull \hbox (4.62497pt too wide) has occurred while \output is active
  []
 
 [4]
+<<<<<<< HEAD
+=======
 \openout3 = `final-project.fff'.
 
 (final-project.fff)
+>>>>>>> e733bfb882194feb71dc50a1aeef43a24659ee31
 Overfull \hbox (4.62497pt too wide) has occurred while \output is active
 \OT1/cmr/m/n/9 5
  []
@@ -657,6 +676,11 @@ Overfull \hbox (4.62497pt too wide) has occurred while \output is active
 
 (final-project.ttt)
 
+<<<<<<< HEAD
+LaTeX Warning: Reference `fig:fig1' on page 6 undefined on input line 406.
+
+(./final-project.bbl)
+=======
 LaTeX Warning: Reference `fig:fig1' on page 6 undefined on input line 383.
 
 (./final-project.bbl)
@@ -678,16 +702,67 @@ File: final-project_files/figure-latex/fig2-1.pdf Graphic file (type pdf)
 Package pdftex.def Info: final-project_files/figure-latex/fig2-1.pdf  used on input line 3.
 (pdftex.def)             Requested size: 289.07928pt x 289.07928pt.
 )
+>>>>>>> e733bfb882194feb71dc50a1aeef43a24659ee31
 Overfull \hbox (4.62497pt too wide) has occurred while \output is active
 \OT1/cmr/m/n/9 8
  []
 
+<<<<<<< HEAD
+[6
+
+] AED endfloat: Processing end Figures and Tables
+=======
 [8 <./final-project_files/figure-latex/fig2-1.pdf>] (./final-project.ttt)
+>>>>>>> e733bfb882194feb71dc50a1aeef43a24659ee31
 Overfull \hbox (4.62497pt too wide) has occurred while \output is active
 \OT1/cmr/m/n/9 9
  []
 
+<<<<<<< HEAD
+[7] (./final-project.fff
+<final-project_files/figure-latex/fig_dag-1.pdf, id=183, 289.08pt x 289.08pt>
+File: final-project_files/figure-latex/fig_dag-1.pdf Graphic file (type pdf)
+<use final-project_files/figure-latex/fig_dag-1.pdf>
+Package pdftex.def Info: final-project_files/figure-latex/fig_dag-1.pdf  used on input line 3.
+(pdftex.def)             Requested size: 289.07928pt x 289.07928pt.
+
+Overfull \hbox (4.62497pt too wide) has occurred while \output is active
+\OT1/cmr/m/n/9 8
+ []
+
+[8 <./final-project_files/figure-latex/fig_dag-1.pdf>]
+<final-project_files/figure-latex/fig_adjustment-1.pdf, id=194, 289.08pt x 289.08pt>
+File: final-project_files/figure-latex/fig_adjustment-1.pdf Graphic file (type pdf)
+<use final-project_files/figure-latex/fig_adjustment-1.pdf>
+Package pdftex.def Info: final-project_files/figure-latex/fig_adjustment-1.pdf  used on input line 11.
+(pdftex.def)             Requested size: 289.07928pt x 289.07928pt.
+
+Overfull \hbox (4.62497pt too wide) has occurred while \output is active
+\OT1/cmr/m/n/9 9
+ []
+
+[9 <./final-project_files/figure-latex/fig_adjustment-1.pdf>]
+<final-project_files/figure-latex/fig2-1.pdf, id=205, 289.08pt x 289.08pt>
+File: final-project_files/figure-latex/fig2-1.pdf Graphic file (type pdf)
+<use final-project_files/figure-latex/fig2-1.pdf>
+Package pdftex.def Info: final-project_files/figure-latex/fig2-1.pdf  used on input line 18.
+(pdftex.def)             Requested size: 289.07928pt x 289.07928pt.
+)
+Overfull \hbox (9.24994pt too wide) has occurred while \output is active
+\OT1/cmr/m/n/9 10
+ []
+
+[10 <./final-project_files/figure-latex/fig2-1.pdf>] (./final-project.ttt)
+Overfull \hbox (9.24994pt too wide) has occurred while \output is active
+\OT1/cmr/m/n/9 11
+ []
+
+[11
+
+
+=======
 [9
+>>>>>>> e733bfb882194feb71dc50a1aeef43a24659ee31
 
 
 
@@ -704,6 +779,22 @@ Package rerunfilecheck Info: File `final-project.out' has not changed.
 (rerunfilecheck)             Checksum: AB0184F71279765DE95670AD3EB7DF27;2629.
  ) 
 Here is how much of TeX's memory you used:
+<<<<<<< HEAD
+ 21305 strings out of 476227
+ 392068 string characters out of 5796555
+ 1933555 words of memory out of 5000000
+ 42812 multiletter control sequences out of 15000+600000
+ 572792 words of font info for 89 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 84i,9n,93p,414b,487s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </home/nguyp22/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcbx1200.600pk></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></home/nguyp22/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on final-project.pdf (12 pages, 290080 bytes).
+PDF statistics:
+ 325 PDF objects out of 1000 (max. 8388607)
+ 261 compressed objects within 3 object streams
+ 66 named destinations out of 1000 (max. 500000)
+ 172 words of extra memory for PDF output out of 10000 (max. 10000000)
+=======
  21283 strings out of 476227
  391368 string characters out of 5796383
  1933555 words of memory out of 5000000
@@ -718,4 +809,5 @@ PDF statistics:
  242 compressed objects within 3 object streams
  60 named destinations out of 1000 (max. 500000)
  162 words of extra memory for PDF output out of 10000 (max. 10000000)
+>>>>>>> e733bfb882194feb71dc50a1aeef43a24659ee31
 
