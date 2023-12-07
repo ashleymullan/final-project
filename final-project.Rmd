@@ -61,6 +61,8 @@ library(cardioStatsUSA)
 data("nhanes_data")
 ```
 
+talk more about population of dataset
+add ATT description, what it is for a non causal expert
 
 # Introduction {#intro}
 
