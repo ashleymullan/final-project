@@ -61,8 +61,16 @@ library(cardioStatsUSA)
 data("nhanes_data")
 ```
 
+
 talk more about population of dataset
 add ATT description, what it is for a non causal expert
+
+```{r include=FALSE}
+nhanes_data_selected <- nhanes_data |> 
+  mutate(log_age = log(demo_age_years)) |>
+  select(chol_med_use, chol_total, bp_sys_mean, bp_med_use, cc_bmi, log_age, demo_race, demo_gender, demo_age_years)
+```
+
 
 # Introduction {#intro}
 
@@ -107,6 +115,10 @@ The NHANES dataset we are using can be downloaded from __cite__ . The dataset co
 
 For this analysis, we had 38977 rows with NA values. We decided to deal with this by removing all the na values. We decided this was preferable to removing certain columns since we were still left with 20,822 data points which is still an extremely large data set. 
 
+```{r fig_vizmis, fig.width = 4, fig.height = 4, fig.cap = "Missing data percentage for selected variables", echo = FALSE, dev = "pdf"}
+vis_miss(nhanes_data_selected)
+```
+
 
 ## Statistical methods
 
@@ -145,7 +157,7 @@ ggdag(dag, use_labels = "label", text = FALSE) +
   theme_dag()
 ```
 
-Given our assumptions, we need to adjust for the following adjustment set.
+Given our assumptions, we need to adjust for the following adjustment set. The adjustment is given in Figure \@ref(fig:fig_adjustment).
 
 ```{r fig_adjustment, fig.width = 4, fig.height = 4, fig.cap = "Causal adjustment set", echo = FALSE, dev = "pdf"}
 ggdag_adjustment_set(
@@ -157,7 +169,12 @@ ggdag_adjustment_set(
 
 ### Exploratory data analysis
 
-
+```{r}
+nhanes_data |> 
+  drop_na() |>
+  ggplot(aes(fill = chol_med_use, x = bp_sys_mean)) +
+  geom_mirror_histogram()
+```
 
 ### Modeling
 
@@ -167,8 +184,13 @@ ggdag_adjustment_set(
 
 We aim answer our causal question by fitting an average treatment effect among the treated. Our causal question is as follows: Among those who take cholesterol lowering medication, does taking this cholesterol lowering medication change their systolic blood pressure?
 
-```{r}
-
+```{r tab_pop, message=FALSE, warning=FALSE}
+nhanes_data_selected |>
+  select(-c(log_age)) |>
+  tbl_summary(
+    by = chol_med_use) |>
+  # add an overall column to the table
+  add_overall(last = TRUE)
 ```
 
 
@@ -182,11 +204,128 @@ We also generated a love plot, displaying the standardized mean difference chang
 
 Finally, we created a weighted empirical cumulative distribution function (eCDF) plot for our continuous variable, "total cholesterol." As shown below, the Weighted ECDF plot indicates balance not only in the mean across exposure groups but also across their respective distributions. No changes are required for our model, and we can now proceed to estimate our average treatment effect among the treated.
 
+```{r message=FALSE, warning=FALSE}
+#check the vibes to think about an estimator
+data <- nhanes_data |> 
+  as.data.frame() |> 
+  drop_na() |>
+  mutate(log_age = log(demo_age_years)) |>
+  select(chol_med_use, chol_total, bp_sys_mean, bp_med_use, cc_bmi, log_age, demo_race, demo_gender)
+
+prop <- glm(chol_med_use ~ chol_total + bp_med_use + cc_bmi + log_age + demo_race + demo_gender, 
+    data = data,
+    family = binomial())
+data <- prop |> 
+  augment(type.predict = "response", data = data)  |>
+  select(-c(.resid, .hat, .sigma, .cooksd, .std.resid)) |>
+  rename("prop" = ".fitted")
+data <- data |>
+  mutate(w_att = wt_att(prop, chol_med_use)) 
+
+```
+
+### Diagnostics
+
+```{r}
+data |> 
+  ggplot(aes(x = prop, 
+             group = chol_med_use, 
+             fill = chol_med_use)) +
+  geom_mirror_histogram(bins = 20) +
+  theme_bw() +
+  labs(x = "Propensity Score",
+       y = "Count",
+       fill = "Uses Cholesterol Medication?",
+       title = "no positivity violations!",
+       subtitle = "(no weighting)") +
+  scale_fill_manual(values = c("blue", "magenta"))
+```
+
+
+```{r}
+data |>
+  ggplot(aes(x = prop, fill = chol_med_use)) +
+  geom_mirror_histogram(
+    aes(fill = chol_med_use,
+        weight = w_att),
+    binwidth = 0.05) +
+  scale_fill_manual(values = c("#006241", "#cba258")) +
+  scale_y_continuous(labels = abs) +
+  theme_bw() +
+  labs(x = "Propensity Score",
+       fill = "Uses Cholesterol Medication?",
+       y = "Count",
+       title = "Weighted Sample Distributions",
+       subtitle = "ATT Weighting")
+```
+
+```{r}
+smds <- tidy_smd(
+  data,
+  .vars = c(chol_total, bp_med_use, cc_bmi, log_age, demo_race, demo_gender),
+  .group = chol_med_use,
+  .wts = w_att
+)
+
+smds |>
+  ggplot(aes(x = abs(smd), y = variable,
+             group = method, color = method)) +
+  geom_love() + 
+  theme_bw() +
+  labs(title = "Love Plot: Examining SMDs")
+```
+
+
+```{r}
+data |>
+  ggplot(aes(x = chol_total, color = chol_med_use)) +
+  geom_ecdf(aes(weights = w_att)) +
+  scale_color_manual(
+    "Uses Cholesterol Medication?",
+    values = c("#FF69B4", "#013220"),
+    labels = c("Y", "N")) +
+    labs(x = "Total Cholesterol", y = "Prop <= X",
+           title = "Weighted ECDF") +
+  theme_bw() 
+
+data |>
+  ggplot(aes(x = chol_total, color = chol_med_use)) +
+  geom_ecdf(aes(weights = w_att)) +
+  scale_color_manual(
+    "Uses Cholesterol Medication?",
+    values = c("#FF69B4", "#013220"),
+    labels = c("Y", "N")) +
+    labs(x = "Total Cholesterol", y = "Prop <= X",
+           title = "Weighted ECDF") +
+  theme_bw() 
+```
+
+
 
 ## Average treatment effect among the treated
 
 We estimated the average treatment effect of taking cholesterol-lowering medication. Our findings indicate that, on average, individuals who take cholesterol-lowering medication experience an increase of 9.26 mm Hg in their Systolic Blood Pressure (SBP). We are 95 percent confident that the average effect of taking this medication on SBP falls within the range of at least 8.578 mm Hg to at most 9.941 mm Hg. Additionally, we conducted a sensitivity analysis to account for the possibility that our Directed Acyclic Graph (DAG) might not include all potential confounding variables. In this analysis, we calculated the necessary relationship between an unmeasured confounder and the change in weight required to shift the lower bound of the confidence interval to the null hypothesis level (5%). We considered exposure confounder effects of sizes 0.05, 0.10, and 0.15, which would necessitate confounder-outcome effects of 172, 85, and 57, respectively, to influence the interval. The smallest of these values, 57, is over 6 times greater than the estimated treatment effect. Therefore, it is reasonable to conclude that the Average Treatment Effect (ATT) we computed is robust against potential confounding factors.
 
+
+```{r tab_reg}
+outcome_mod <-  lm(bp_sys_mean ~ chol_med_use, data = data, weights = w_att)
+robust_var <- sandwich(outcome_mod)[2, 2]
+point_est <- coef(outcome_mod)[2]
+lb <- round(point_est - 1.96 * sqrt(robust_var),3)
+ub <- round(point_est + 1.96 * sqrt(robust_var),3)
+
+paste0("The point estimate for the ATT is ", round(point_est,3), " with 95% CI (", lb, ",", ub,").")
+```
+
+## Sensitivity analysis
+
+```{r tab_sensitivity}
+tip_coef_with_continuous(
+  effect_observed = -2.71, #upper bound of CI
+  exposure_confounder_effect = c(0.05, 0.10, 0.15),
+  verbose = FALSE
+)
+```
 
 # Discussion {#discussion}
 
