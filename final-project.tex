@@ -96,8 +96,8 @@ of Statistics, Wake Forest University
 We investigate the average treatment effect among the treated (ATT) of
 cholesterol-lowering medication on the mean systolic blood pressure (mm
 Hg). Using data from the National Health and Nutrition Examination
-Survey (NHANES), we fit a propensity score model to estimate the ATT
-among adults living in the United States of America.
+Survey (NHANES), we use the Inverse Probability Weighting method to
+estimate the ATT among adults living in the United States of America.
 \end{abstract}
 
 %
@@ -126,12 +126,14 @@ prevalence of blood control by medication is only 39.64\%
 help improve the prevalence and hypertension control rates in the USA.
 
 High blood pressure and high cholesterol often occur at the same time.
-The prescription of both antihypertensive and cholesterol-lowering drugs
-is generally required for these patients. It is recommended that doctors
-prescribe statin drugs like atorvastatin (Lipitor), and simvastatin
-(Zocor, FloLipid) for patients with high cholesterol or patients with
-high blood pressure (with or without high cholesterol)
-\citep{williams_facing_2020}. \citep{egan_blood_2013}
+According to survey, 60.7\% to 64.3\% of people with high blood pressure
+also have high cholesterol \citep{egan_blood_2013}. The prescription of
+both anti-hypertensive and cholesterol-lowering drugs is generally
+required for these patients. It is recommended that doctors prescribe
+statin drugs like atorvastatin (Lipitor), and simvastatin (Zocor,
+FloLipid) for patients with high cholesterol or patients with high blood
+pressure (with or without high cholesterol)
+\citep{williams_facing_2020}.
 
 Statins (a chemical in cholesterol-lowering medication) have been proven
 to minimize the risk of cardiovascular adverse events since it block a
@@ -159,13 +161,13 @@ men, people of color, older people, obese people and people with
 diabetes and chronic kidney disease \citep{chobufo_prevalence_2020}.
 Moreover, as stated before, if a patient have high BP, they are
 sometimes prescribed cholesterol-lowering medication along with
-anti-hypertensive medication to control for BP. In addition, if a person
-has high cholesterol, this has been shown to cause increase in BP.
-Moreover, smoking has been shown to increase BP. Furthermore, a person's
-BMI, smoking habit, and cholesterol may be a result of poor lifestyle
-habit. There are distinct cluster of lifestyle in different
-demographics. Patients with high BMI are also at risk of having high
-cholesterol.
+anti-hypertensive medication to control for BP \citep{egan_blood_2013}.
+In addition, if a person has high cholesterol, this has been shown to
+cause increase in BP. Moreover, smoking has been shown to increase BP.
+Furthermore, a person's BMI, smoking habit, and cholesterol may be a
+result of poor lifestyle habit. There are distinct cluster of lifestyle
+in different demographics. Patients with high BMI are also at risk of
+having high cholesterol.
 
 \hypertarget{methods}{%
 \section{Materials and methods}\label{methods}}
@@ -400,19 +402,7 @@ medication. Our findings indicate that, on average, individuals who take
 cholesterol-lowering medication experience a decrease 3.911 mm Hg in
 their Systolic Blood Pressure (SBP). We are 95 percent confident that
 the average effect of taking this medication on SBP falls within the
-range of at least -4.960 mm Hg to at most -2.863 mm Hg. Additionally, we
-conducted a sensitivity analysis to account for the possibility that our
-Directed Acyclic Graph (DAG) might not include all potential confounding
-variables. In this analysis, we calculated the necessary relationship
-between an unmeasured confounder and the change in weight required to
-shift the lower bound of the confidence interval to the null hypothesis
-level (5\%). We considered exposure confounder effects of sizes 0.05,
-0.10, and 0.15, which would necessitate confounder-outcome effects of
-172, 85, and 57, respectively, to influence the interval. The smallest
-of these values, 57, is over 6 times greater than the estimated
-treatment effect. Therefore, it is reasonable to conclude that the
-Average Treatment Effect (ATT) we computed is robust against potential
-confounding factors.
+range of at least -4.960 mm Hg to at most -2.863 mm Hg.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.5395}}
@@ -440,6 +430,19 @@ Yes & -3.9 & -5.0, -2.9 & \textless0.001 \\
 \hypertarget{sensitivity-analysis}{%
 \subsection{Sensitivity analysis}\label{sensitivity-analysis}}
 
+We conducted a sensitivity analysis to account for the possibility that
+our Directed Acyclic Graph (DAG) might not include all potential
+confounding variables. In this analysis, we calculated the necessary
+relationship between an unmeasured confounder and the change in weight
+required to shift the lower bound of the confidence interval to the null
+hypothesis level (5\%). We considered exposure confounder effects of
+sizes 0.05, 0.10, and 0.15, which would necessitate confounder-outcome
+effects of 172, 85, and 57, respectively, to influence the interval. The
+smallest of these values, 57, is over 6 times greater than the estimated
+treatment effect. Therefore, it is reasonable to conclude that the
+Average Treatment Effect (ATT) we computed is robust against potential
+confounding factors.
+
 \includegraphics{final-project_files/figure-latex/tab_sensitivity-1.pdf}
 
 \hypertarget{discussion}{%
@@ -448,15 +451,27 @@ Yes & -3.9 & -5.0, -2.9 & \textless0.001 \\
 \hypertarget{limitation}{%
 \subsection{Limitation}\label{limitation}}
 
-will make lifestyle changes rather than take medication
+Our dataset does not include information on when a person start taking
+the anti-hypertensive medication and the cholesterol-lowering medication
+in relation to a biophysical measurement.
+
+Furthermore, in addition to pharmacotherapy, it is also important to
+adopt a lifestyle change include exercise, a healthy diet, regulating
+sodium, reducing alcohol use, reduce smoking, getting sleep, reducing
+stress, and regular health check-ups.
 
 Even with prescribed medication, the barriers to effective blood control
 includes those that are under the control of the physician (patients'
 insufficient education and motivation, reluctance to initiate lifestyle
 changes or drug treatment) and those that are under the control of the
-patients () \citep{dusing_overcoming_2006}
+patients (failure to comply with recommended lifestyle modifications and
+poor medication compliance) \citep{dusing_overcoming_2006}.
 
-not time sensitive
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+We conclude that for people taking cholesterol-lowering medication, they
+should continue to do so.
 
 \hypertarget{supplement}{%
 \section{Supplementary information}\label{supplement}}
