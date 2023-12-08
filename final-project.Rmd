@@ -61,36 +61,18 @@ library(cardioStatsUSA)
 data("nhanes_data")
 ```
 
-
-talk more about population of dataset
-add ATT description, what it is for a non causal expert
-
-```{r include=FALSE}
-nhanes_data_selected <- nhanes_data |> 
-  mutate(log_age = log(demo_age_years)) |>
-  select(chol_med_use, chol_total, bp_sys_mean, bp_med_use, cc_bmi, log_age, demo_race, demo_gender, demo_age_years)
-```
-
-
 # Introduction {#intro}
 
 Controlling blood pressure (BP) reduces the risk for cardiovascular disease. However, the prevalence of BP control (i.e., systolic BP < 140 mmHg and diastolic BP < 90 mmHg) among US adults with hypertension has decreased [@cdc_prevalence_nodate]. In 2017-2018, prevalence of hypertension in the USA was 49.64% while the prevalence of blood control by medication is only 39.64% [@chobufo_prevalence_2020]. Further interventions are needed to help improve the prevalence and hypertension control rates in the USA.
 
-
 High blood pressure and high cholesterol often occur at the same time. The prescription of both antihypertensive and cholesterol-lowering drugs is generally required for these patients. It is recommended that doctors prescribe statin drugs like atorvastatin (Lipitor), and simvastatin (Zocor, FloLipid) for patients with high cholesterol or patients with high blood pressure (with or without high cholesterol) [@williams_facing_2020]. [@egan_blood_2013] 
 
-Statins (a chemical in cholesterol-lowering medication) have been proven to minimize the risk of cardiovascular adverse events since it block a substance the liver needs to make cholesterol [@liu_statins_2023]. Thus statins have the potential to lower blood pressure. In many cases, simultaneously lower blood pressure and cholesterol level [@strazzullo_statins_2007]. 
+Statins (a chemical in cholesterol-lowering medication) have been proven to minimize the risk of cardiovascular adverse events since it block a substance the liver needs to make cholesterol [@liu_statins_2023]. Thus statins have the potential to lower blood pressure. In many cases, simultaneously lower blood pressure and cholesterol level [@strazzullo_statins_2007].
 
+Using a causal analysis approach, we aim to explore whether taking cholesterol-lowering medication have the potential to lower blood pressure. By analyzing the publicly available National Health and Nutrition Examination Survey (NHANES), we will estimate the average treatment effect of taking cholesterol-lowing medication among those who take the medication. Our exposure is whether or not a person has been taking any cholesterol-loweing medication at the time of the survey. Our primary outcome is the mean systolic blood pressure (DBP) at the time of the survey. The average treatment effect among the treated (ATT) is the estimand of the different in DBP between taking cholesterol-lowering medication and not taking the medication. This estimand is conditioned on the exposed group.
 
-__explain our dags and why we include thing__
+With this causal question in mind, we want to control for demographics and a person bmi since high blood pressure disproportionately affect men, people of color, older people, obese people and people with diabetes and chronic kidney disease [@chobufo_prevalence_2020]. Moreover, as stated before, if a patient have high BP, they are sometimes prescribed cholesterol-lowering medication along with anti-hypertensive medication to control for BP. In addition, if a person has high cholesterol, this has been shown to cause increase in BP. Moreover, smoking has been shown to increase BP. Furthermore, a person's BMI, smoking habit, and cholesterol may be a result of poor lifestyle habit. There are distinct cluster of lifestyle in different demographics. Patients with high BMI are also at risk of having high cholesterol. 
 
-We want to control for demographics since high blood pressure disproportionally 
-
-__add short summary of methods here__
-
-Using a causal analysis approach, we aim to explore whether taking cholesterol-lowering medication have the potential to lower blood pressure. By analyzing the publicly available National Health and Nutrition Examination Survey (NHANES), we will estimate the average treatment effect among those who take cholesterol-lowering medication. Our exposure is whether or not a person take any cholesterol-loweing medication at the time of the survey. Our primary outcome is mean systolic blood pressure (DBP) at the time of the survey.
-
-__add short summary of results here__
 
 # Materials and methods {#methods}
 
@@ -98,42 +80,42 @@ __add short summary of results here__
 
 The National Health and Nutrition Examination Survey (NHANES) combines interviews and physical examinations to assess the health and nutritional status of adults and children in the United States of America. The program started in the early 1960s and has been conducted every two years since 1999. The survey samples from a nationally representative 5,000 persons each year. The participants are located in counties across the country, 15 of which are visited each year. The interview asks questions about demographic, socioeconomic, dietary, and health-related questions. The examination consists of medical, dental, physiological measurements, and laboratory tests.
 
-The NHANES dataset we are using can be downloaded from __cite__ . The dataset contains information from the survey from 1999 to 2020 with a sample of 59,799 rows and 111 chosen columns. Each row is a noninstitutionalized US adults participated in the survey between 1999 and 2020. Tahe columns contain information about demographics, blood pressure levels, hypertension status, antihypertensive medication usage, and co-morbidities. 
+The NHANES dataset we are using is from the cardioStatsUSA R package. The dataset contains information from the survey from 1999 to 2020 with a sample of 59,799 rows and 111 chosen columns focusing on cardiovascular disease. Each row is a noninstitutionalized US adults who participated in the survey between 1999 and 2020. The columns contain information about demographics, blood pressure levels, hypertension status, antihypertensive medication usage, and co-morbidities. 
 
-For this analysis, we had 38977 rows with NA values. We decided to deal with this by removing all the na values. We decided this was preferable to removing certain columns since we were still left with 20,822 data points which is still an extremely large data set. 
+For this analysis, we had 38977 rows with NA values. We decided to deal with this by removing all the na values. We decided this was preferable to removing certain columns since we were still left with 20,822 data points which is still an extremely large data set. We also selected columns that represent our treatment, our outcome out interest, and the covariates we need to adjust for given the proposed causal directed acyclic graph in the [Causal directed acyclic graphs] section
 
-```{r fig_vizmis, fig.width = 4, fig.height = 4, fig.cap = "Missing data percentage for selected variables", echo = FALSE, dev = "pdf"}
-vis_miss(nhanes_data_selected)
+### Exploratory data analysis
+
+```{r fig_eda, echo=FALSE, fig.cap="Mirror histogram by whether the participants use cholesterol medication", fig.height=4, message=FALSE, warning=FALSE, dev="pdf"}
+nhanes_data |> 
+  drop_na() |>
+  ggplot(aes(fill = chol_med_use, x = bp_sys_mean)) +
+  geom_mirror_histogram() + 
+  labs(fill = "Use cholesterol medication",
+       x = "Mean systolic blood pressure (mmHg)")
 ```
 
 
-## Statistical methods
+### Causal directed acyclic graphs {#dags}
 
-We fitted a propensity score model with "Total cholesterol" in mg/dL as our explanatory variable since this was the only variable, and "taking cholesterol medication" as our response variable, as it represents our exposure variable. We employed a Logistic Regression model for the propensity score model.
+We visualize the assumptions that we’re making about the causal relationships between the use of cholesterol-lowering medication (the exposure), the mean systolic blood pressure (the outcome), and other possible confounders in the data set using a directed acyclic graph (DAG) (Figure \@ref(fig:fig-dag)). The demographic variable include: age, gender, and race.
 
-Subsequently, we used the propensity score model to fit our outcome model, estimating the average treatment effect among the treated. We utilized a linear regression model with "cholesterol medication" as our explanatory variable and "Systolic blood pressure (SBP)" in mm Hg as our response variable.
-
-To assess the appropriateness of our propensity score model and proceed with our final model, we employed weighted mirrored histograms, ECDF plots, and Love Plots.
-
-### Causal directed acyclic graphs
-
-We visualize the assumptions that we’re making about the causal relationships between the use of cholesterol-lowering medication (the exposure), the mean systolic blood pressure (the outcome), and other possible confounders in the data set.
-
-```{r fig_dag, fig.width = 4, fig.height = 4, fig.cap = "Causal direct acyclic graph between cholesterol-lowering medication and the mean systolic blood pressure", echo = FALSE, dev = "pdf"}
+```{r fig-dag, fig.height = 4, fig.cap = "Causal direct acyclic graph between cholesterol-lowering medication and the mean systolic blood pressure", echo = FALSE, dev = "pdf"}
 dag <- dagify(
   bp_sys_mean ~ bp_med_use + cc_smoke + cc_bmi + chol_total + demographics + chol_med_use, 
-  bp_med_use ~ bp_sys_mean,
+  bp_sys_mean ~ bp_med_use ,
+  bp_med_use ~ demographics,
   cc_smoke ~ demographics,
   cc_bmi ~ demographics,
-  chol_total ~ cc_bmi + demographics,
-  chol_med_use ~ chol_total,
+  chol_total ~ cc_bmi + demographics + cc_smoke,
+  chol_med_use ~ chol_total + demographics + bp_med_use,
   exposure = "chol_med_use",
   outcome = "bp_sys_mean",
   labels = c(
     bp_sys_mean = "systolic blood pressure",
     bp_med_use = "antihypertensive medication",
     cc_smoke = "smoking",
-    cc_bmi = "bmi",
+    cc_bmi = "body mass index",
     chol_total = "total cholesterol",
     demographics = "demographics",
     chol_med_use = "cholesterol-lowering medication"
@@ -144,42 +126,47 @@ ggdag(dag, use_labels = "label", text = FALSE) +
   theme_dag()
 ```
 
-Given our assumptions, we need to adjust for the following adjustment set. The adjustment is given in Figure \@ref(fig:fig_adjustment).
+Given our assumptions, we obtained the adjustment set that will help us control for possible confounders (\@ref(fig:fig_adjustment)). Our adjustment set only includes the amount of total cholesterol, demographics, and whether they use anti-hypertensive medication.
 
-```{r fig_adjustment, fig.width = 4, fig.height = 4, fig.cap = "Causal adjustment set", echo = FALSE, dev = "pdf"}
+```{r fig_adjustment, fig.height = 4, fig.cap = "Causal adjustment set", echo = FALSE, dev = "pdf"}
 ggdag_adjustment_set(
   dag,
   use_labels = "label",
   text = FALSE
 )
 ```
-
-### Exploratory data analysis
-
-```{r fig_eda, fig.width = 4, fig.height = 4, fig.cap = "Mirror histogram by whether the participants use cholesterol medication", echo = FALSE, dev = "pdf"}
-nhanes_data |> 
-  drop_na() |>
-  ggplot(aes(fill = chol_med_use, x = bp_sys_mean)) +
-  geom_mirror_histogram() + 
-  labs(fill = "Use cholesterol medication",
-       x = "Mean systolic blood pressure (mmHg)")
+```{r include=FALSE}
+nhanes_data_selected <- nhanes_data |> 
+  mutate(log_age = log(demo_age_years)) |>
+  select(chol_med_use, chol_total, bp_sys_mean, log_age, demo_race, demo_gender, demo_age_years, bp_med_use)
 ```
 
-### Modeling
+
+## Statistical methods
+
+We aim to answer our causal question by fitting an average treatment effect among the treated. Our causal question is as follows: Among those who take cholesterol lowering medication, does taking this cholesterol lowering medication change their systolic blood pressure?
+
+We fitted a propensity score model with our DAGS adjustment set as our explanatory variable ([Causal directed acyclic graphs]), and whether a person was taking cholesterol medication as our response variable. We employed a logistic regression model for the propensity score model. We log transform our age variable since the distribution is usually skewed.
+
+Subsequently, we used the propensity score as weight for our exposure variable (taking cholesterol medication). To estimate the average treatment effect among the treated, we fit a weighted linear regression model. We use the weighted cholesterol medication as our explanatory variable and systolic blood pressure as our response variable.
+
+To assess the appropriateness of our propensity score model and proceed with our final model, we perform diagnostic using weighted mirrored histograms, empirical cumulative distribution function (ECDF) plots, and Love plots.
 
 # Results
 
 ## Study population
 
-We aim answer our causal question by fitting an average treatment effect among the treated. Our causal question is as follows: Among those who take cholesterol lowering medication, does taking this cholesterol lowering medication change their systolic blood pressure?
 
-```{r tab_pop, message=FALSE, warning=FALSE}
+```{r tab_pop, echo=FALSE, message=FALSE, warning=FALSE}
 nhanes_data_selected |>
   select(-c(log_age)) |>
   tbl_summary(
     by = chol_med_use) |>
   # add an overall column to the table
-  add_overall(last = TRUE)
+  add_overall(last = TRUE)  |>
+  modify_caption("**Table 1. Survey Participant Characteristics**") |>
+  bold_labels() |>
+  modify_header(label ~ "**Taking Cholesterol-lowering Medication**") 
 ```
 
 
@@ -193,15 +180,15 @@ We also generated a love plot, displaying the standardized mean difference chang
 
 Finally, we created a weighted empirical cumulative distribution function (eCDF) plot for our continuous variable, "total cholesterol." As shown below, the Weighted ECDF plot indicates balance not only in the mean across exposure groups but also across their respective distributions. No changes are required for our model, and we can now proceed to estimate our average treatment effect among the treated.
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 #check the vibes to think about an estimator
 data <- nhanes_data |> 
   as.data.frame() |> 
   drop_na() |>
   mutate(log_age = log(demo_age_years)) |>
-  select(chol_med_use, chol_total, bp_sys_mean, bp_med_use, cc_bmi, log_age, demo_race, demo_gender)
+  select(chol_med_use, chol_total, bp_sys_mean, log_age, demo_race, demo_gender, demo_age_years, bp_med_use)
 
-prop <- glm(chol_med_use ~ chol_total + bp_med_use + cc_bmi + log_age + demo_race + demo_gender, 
+prop <- glm(chol_med_use ~ chol_total + bp_med_use + log_age + demo_race + demo_gender, 
     data = data,
     family = binomial())
 data <- prop |> 
@@ -224,14 +211,14 @@ data |>
   theme_bw() +
   labs(x = "Propensity Score",
        y = "Count",
-       fill = "Uses Cholesterol Medication?",
-       title = "no positivity violations!",
-       subtitle = "(no weighting)") +
-  scale_fill_manual(values = c("blue", "magenta"))
+       fill = "Uses Cholesterol Medication?", 
+       title = "Sample Distributions",
+       subtitle = "No Weighting") +
+  scale_fill_manual(values = c("#006241", "#cba258"))
 ```
 
 
-```{r fig_diag2, fig.width = 4, fig.height = 4, fig.cap = "Mirror histogram by whether the participants use cholesterol medication", echo = FALSE, dev = "pdf"}
+```{r fig_diag2, fig.width = 4, fig.height = 4, fig.cap = "Mirror histogram by whether the participants use cholesterol medication using ATT weighting", echo = FALSE, dev = "pdf"}
 data |>
   ggplot(aes(x = prop, fill = chol_med_use)) +
   geom_mirror_histogram(
@@ -251,7 +238,7 @@ data |>
 ```{r fig_love, fig.width = 4, fig.height = 4, fig.cap = "Love plot for covariates", echo = FALSE, dev = "pdf"}
 smds <- tidy_smd(
   data,
-  .vars = c(chol_total, bp_med_use, cc_bmi, log_age, demo_race, demo_gender),
+  .vars = c(chol_total, bp_med_use, log_age, demo_race, demo_gender),
   .group = chol_med_use,
   .wts = w_att
 )
@@ -272,18 +259,7 @@ data |>
   geom_ecdf(aes(weights = w_att)) +
   scale_color_manual(
     "Uses Cholesterol Medication?",
-    values = c("#FF69B4", "#013220"),
-    labels = c("Y", "N")) +
-    labs(x = "Total Cholesterol", y = "Prop <= X",
-           title = "Weighted ECDF") +
-  theme_bw() 
-
-data |>
-  ggplot(aes(x = chol_total, color = chol_med_use)) +
-  geom_ecdf(aes(weights = w_att)) +
-  scale_color_manual(
-    "Uses Cholesterol Medication?",
-    values = c("#FF69B4", "#013220"),
+    values = c("#cba258", "#006241"),
     labels = c("Y", "N")) +
     labs(x = "Total Cholesterol", y = "Prop <= X",
            title = "Weighted ECDF") +
@@ -294,10 +270,10 @@ data |>
 
 ## Average treatment effect among the treated
 
-We estimated the average treatment effect of taking cholesterol-lowering medication. Our findings indicate that, on average, individuals who take cholesterol-lowering medication experience an increase of 9.26 mm Hg in their Systolic Blood Pressure (SBP). We are 95 percent confident that the average effect of taking this medication on SBP falls within the range of at least 8.578 mm Hg to at most 9.941 mm Hg. Additionally, we conducted a sensitivity analysis to account for the possibility that our Directed Acyclic Graph (DAG) might not include all potential confounding variables. In this analysis, we calculated the necessary relationship between an unmeasured confounder and the change in weight required to shift the lower bound of the confidence interval to the null hypothesis level (5%). We considered exposure confounder effects of sizes 0.05, 0.10, and 0.15, which would necessitate confounder-outcome effects of 172, 85, and 57, respectively, to influence the interval. The smallest of these values, 57, is over 6 times greater than the estimated treatment effect. Therefore, it is reasonable to conclude that the Average Treatment Effect (ATT) we computed is robust against potential confounding factors.
+We estimated the average treatment effect of taking cholesterol-lowering medication. Our findings indicate that, on average, individuals who take cholesterol-lowering medication experience a decrease 3.911 mm Hg in their Systolic Blood Pressure (SBP). We are 95 percent confident that the average effect of taking this medication on SBP falls within the range of at least -4.960 mm Hg to at most -2.863 mm Hg. Additionally, we conducted a sensitivity analysis to account for the possibility that our Directed Acyclic Graph (DAG) might not include all potential confounding variables. In this analysis, we calculated the necessary relationship between an unmeasured confounder and the change in weight required to shift the lower bound of the confidence interval to the null hypothesis level (5%). We considered exposure confounder effects of sizes 0.05, 0.10, and 0.15, which would necessitate confounder-outcome effects of 172, 85, and 57, respectively, to influence the interval. The smallest of these values, 57, is over 6 times greater than the estimated treatment effect. Therefore, it is reasonable to conclude that the Average Treatment Effect (ATT) we computed is robust against potential confounding factors.
 
 
-```{r tab_reg, echo=FALSE}
+```{r fit_effect, include=FALSE}
 outcome_mod <-  lm(bp_sys_mean ~ chol_med_use, data = data, weights = w_att)
 robust_var <- sandwich(outcome_mod)[2, 2]
 point_est <- coef(outcome_mod)[2]
@@ -307,6 +283,33 @@ ub <- round(point_est + 1.96 * sqrt(robust_var),3)
 paste0("The point estimate for the ATT is ", round(point_est,3), " with 95% CI (", lb, ",", ub,").")
 ```
 
+```{r pretty_sandwich, include=FALSE}
+tidy_robust <- function(x, 
+                        exponentiate = FALSE, 
+                        conf.level = 0.95, 
+                        robust = c("HC0", "HC1", "HC2", "HC3", "HC4", "HC4m", "HC5"), 
+                        ...) {
+  robust <- match.arg(robust)
+  
+  jtools::summ(x, confint = TRUE, ci.width = conf.level, 
+               exp = exponentiate, robust = robust) %>%
+    purrr::pluck("coeftable") %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column() %>%
+    setNames(c("term", "estimate", "conf.low", "conf.high", 
+               "statistic", "p.value"))
+}
+```
+
+
+```{r tab_reg, echo=FALSE, message=FALSE, warning=FALSE}
+outcome_mod |>
+  tbl_regression(
+    tidy_fun = tidy_robust
+  ) 
+```
+
+
 ## Sensitivity analysis
 
 ```{r tab_sensitivity, echo=FALSE}
@@ -314,7 +317,15 @@ tip_coef_with_continuous(
   effect_observed = -2.71, #upper bound of CI
   exposure_confounder_effect = c(0.05, 0.10, 0.15),
   verbose = FALSE
-)
+) |>
+  ggplot(aes(confounder_outcome_effect, exposure_confounder_effect)) +
+  geom_line(color = "#009E73", linewidth = 1.1) +
+  geom_point(fill = "#009E73", color = "white", size = 2.5, shape = 21) +
+  labs(
+    x = "Confounder-Outcome Effect",
+    y = "Scaled mean differences in\n confounder between exposure groups"
+  )
+  
 ```
 
 # Discussion {#discussion}
@@ -336,61 +347,5 @@ All code for the analysis can be accessed at __link github__
 # Acknowledgement {#acknowledge}
 
 Thank Dr. Lucy D'Agostino McGowan for her guidance and assistance in preparing this manuscript.
-
-# Section title {#sec:1}
-
-Text with citations by @heagerty2000time, [@pepe2003statistical].
-
-## Subsection title {#sec:2}
-
-as required [@hoerl1970ridge; @zou2005regularization]. Don't forget to give each section
-and subsection a unique label (see Sect. \ref{sec:1}).
-
-#### Paragraph headings 
-
-Use paragraph headings as needed.
-
-## Equations
-
-Here is an equation:
-
-$$ f_{X}(x) = \left(\frac{\alpha}{\beta}\right)\left(\frac{x}{\beta}\right)^{\alpha-1}e^{-\left(\frac{x}{\beta}\right)^{\alpha}}; \alpha,\beta,x > 0 $$
-
-Here is another:
-\begin{align}
-a^2+b^2=c^2
-\end{align}
-
-Inline equations: $\sum_{i = 2}^\infty\{\alpha_i^\beta\}$
-
-# Figures and tables
-
-## Figures coming from R
-
-#### Normal figure embedded in text
-
-```{r fig2, fig.width = 4, fig.height = 4, fig.cap = "Output from `pdf()`", echo = FALSE, dev = "pdf"}
-ggdag(dag, use_labels = "label", text = FALSE) +
-  theme_dag()
-```
-
-\clearpage
-
-## Tables coming from R
-
-
-```{r tab1, results = 'asis'}
-print(xtable::xtable(head(mtcars)[,1:4], 
-caption = "Caption centered under table", label = "tab1"), 
-comment = FALSE, timestamp = FALSE, caption.placement = "top")
-```
-
-Table \ref{tab1} shows these numbers. Some of those numbers are plotted in Figure \ref{fig:fig1}.
-
-
-```{r tab2}
-head(mtcars[,1:4])
-```
-
 
 # References

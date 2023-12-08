@@ -37,47 +37,6 @@
 \usepackage{booktabs}
 %% \raggedbottom % To avoid glue in typesetteing, sbs>>
 
-% Pandoc syntax highlighting
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
 % tightlist command for lists without linebreak
 \providecommand{\tightlist}{%
@@ -154,9 +113,6 @@ control.
 
 \maketitle
 
-talk more about population of dataset add ATT description, what it is
-for a non causal expert
-
 \hypertarget{intro}{%
 \section{Introduction}\label{intro}}
 
@@ -184,23 +140,32 @@ Thus statins have the potential to lower blood pressure. In many cases,
 simultaneously lower blood pressure and cholesterol level
 \citep{strazzullo_statins_2007}.
 
-\textbf{explain our dags and why we include thing}
-
-We want to control for demographics since high blood pressure
-disproportionally
-
-\textbf{add short summary of methods here}
-
 Using a causal analysis approach, we aim to explore whether taking
 cholesterol-lowering medication have the potential to lower blood
 pressure. By analyzing the publicly available National Health and
 Nutrition Examination Survey (NHANES), we will estimate the average
-treatment effect among those who take cholesterol-lowering medication.
-Our exposure is whether or not a person take any cholesterol-loweing
-medication at the time of the survey. Our primary outcome is mean
-systolic blood pressure (DBP) at the time of the survey.
+treatment effect of taking cholesterol-lowing medication among those who
+take the medication. Our exposure is whether or not a person has been
+taking any cholesterol-loweing medication at the time of the survey. Our
+primary outcome is the mean systolic blood pressure (DBP) at the time of
+the survey. The average treatment effect among the treated (ATT) is the
+estimand of the different in DBP between taking cholesterol-lowering
+medication and not taking the medication. This estimand is conditioned
+on the exposed group.
 
-\textbf{add short summary of results here}
+With this causal question in mind, we want to control for demographics
+and a person bmi since high blood pressure disproportionately affect
+men, people of color, older people, obese people and people with
+diabetes and chronic kidney disease \citep{chobufo_prevalence_2020}.
+Moreover, as stated before, if a patient have high BP, they are
+sometimes prescribed cholesterol-lowering medication along with
+anti-hypertensive medication to control for BP. In addition, if a person
+has high cholesterol, this has been shown to cause increase in BP.
+Moreover, smoking has been shown to increase BP. Furthermore, a person's
+BMI, smoking habit, and cholesterol may be a result of poor lifestyle
+habit. There are distinct cluster of lifestyle in different
+demographics. Patients with high BMI are also at risk of having high
+cholesterol.
 
 \hypertarget{methods}{%
 \section{Materials and methods}\label{methods}}
@@ -219,76 +184,26 @@ interview asks questions about demographic, socioeconomic, dietary, and
 health-related questions. The examination consists of medical, dental,
 physiological measurements, and laboratory tests.
 
-The NHANES dataset we are using can be downloaded from \textbf{cite} .
+The NHANES dataset we are using is from the cardioStatsUSA R package.
 The dataset contains information from the survey from 1999 to 2020 with
-a sample of 59,799 rows and 111 chosen columns. Each row is a
-noninstitutionalized US adults participated in the survey between 1999
-and 2020. Tahe columns contain information about demographics, blood
-pressure levels, hypertension status, antihypertensive medication usage,
-and co-morbidities.
+a sample of 59,799 rows and 111 chosen columns focusing on
+cardiovascular disease. Each row is a noninstitutionalized US adults who
+participated in the survey between 1999 and 2020. The columns contain
+information about demographics, blood pressure levels, hypertension
+status, antihypertensive medication usage, and co-morbidities.
 
 For this analysis, we had 38977 rows with NA values. We decided to deal
 with this by removing all the na values. We decided this was preferable
 to removing certain columns since we were still left with 20,822 data
-points which is still an extremely large data set.
-
-\begin{figure}
-\centering
-\includegraphics{final-project_files/figure-latex/fig_vizmis-1.pdf}
-\caption{Missing data percentage for selected variables}
-\end{figure}
-
-\hypertarget{statistical-methods}{%
-\subsection{Statistical methods}\label{statistical-methods}}
-
-We fitted a propensity score model with ``Total cholesterol'' in mg/dL
-as our explanatory variable since this was the only variable, and
-``taking cholesterol medication'' as our response variable, as it
-represents our exposure variable. We employed a Logistic Regression
-model for the propensity score model.
-
-Subsequently, we used the propensity score model to fit our outcome
-model, estimating the average treatment effect among the treated. We
-utilized a linear regression model with ``cholesterol medication'' as
-our explanatory variable and ``Systolic blood pressure (SBP)'' in mm Hg
-as our response variable.
-
-To assess the appropriateness of our propensity score model and proceed
-with our final model, we employed weighted mirrored histograms, ECDF
-plots, and Love Plots.
-
-\hypertarget{causal-directed-acyclic-graphs}{%
-\subsubsection{Causal directed acyclic
-graphs}\label{causal-directed-acyclic-graphs}}
-
-We visualize the assumptions that we're making about the causal
-relationships between the use of cholesterol-lowering medication (the
-exposure), the mean systolic blood pressure (the outcome), and other
-possible confounders in the data set.
-
-\begin{figure}
-\centering
-\includegraphics{final-project_files/figure-latex/fig_dag-1.pdf}
-\caption{Causal direct acyclic graph between cholesterol-lowering
-medication and the mean systolic blood pressure}
-\end{figure}
-
-Given our assumptions, we need to adjust for the following adjustment
-set. The adjustment is given in Figure @ref(fig:fig\_adjustment).
-
-\begin{figure}
-\centering
-\includegraphics{final-project_files/figure-latex/fig_adjustment-1.pdf}
-\caption{Causal adjustment set}
-\end{figure}
+points which is still an extremely large data set. We also selected
+columns that represent our treatment, our outcome out interest, and the
+covariates we need to adjust for given the proposed causal directed
+acyclic graph in the \protect\hyperlink{dags}{Causal directed acyclic
+graphs} section
 
 \hypertarget{exploratory-data-analysis}{%
 \subsubsection{Exploratory data
 analysis}\label{exploratory-data-analysis}}
-
-\begin{verbatim}
-## `stat_mirror_count()` using `bins = 30`. Pick better value with `binwidth`.
-\end{verbatim}
 
 \begin{figure}
 \centering
@@ -297,8 +212,59 @@ analysis}\label{exploratory-data-analysis}}
 medication}
 \end{figure}
 
-\hypertarget{modeling}{%
-\subsubsection{Modeling}\label{modeling}}
+\hypertarget{dags}{%
+\subsubsection{Causal directed acyclic graphs}\label{dags}}
+
+We visualize the assumptions that we're making about the causal
+relationships between the use of cholesterol-lowering medication (the
+exposure), the mean systolic blood pressure (the outcome), and other
+possible confounders in the data set using a directed acyclic graph
+(DAG) (Figure @ref(fig:fig-dag)). The demographic variable include: age,
+gender, and race.
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig-dag-1.pdf}
+\caption{Causal direct acyclic graph between cholesterol-lowering
+medication and the mean systolic blood pressure}
+\end{figure}
+
+Given our assumptions, we obtained the adjustment set that will help us
+control for possible confounders (@ref(fig:fig\_adjustment)). Our
+adjustment set only includes the amount of total cholesterol,
+demographics, and whether they use anti-hypertensive medication.
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_adjustment-1.pdf}
+\caption{Causal adjustment set}
+\end{figure}
+
+\hypertarget{statistical-methods}{%
+\subsection{Statistical methods}\label{statistical-methods}}
+
+We aim to answer our causal question by fitting an average treatment
+effect among the treated. Our causal question is as follows: Among those
+who take cholesterol lowering medication, does taking this cholesterol
+lowering medication change their systolic blood pressure?
+
+We fitted a propensity score model with our DAGS adjustment set as our
+explanatory variable (\protect\hyperlink{dags}{Causal directed acyclic
+graphs}), and whether a person was taking cholesterol medication as our
+response variable. We employed a logistic regression model for the
+propensity score model. We log transform our age variable since the
+distribution is usually skewed.
+
+Subsequently, we used the propensity score as weight for our exposure
+variable (taking cholesterol medication). To estimate the average
+treatment effect among the treated, we fit a weighted linear regression
+model. We use the weighted cholesterol medication as our explanatory
+variable and systolic blood pressure as our response variable.
+
+To assess the appropriateness of our propensity score model and proceed
+with our final model, we perform diagnostic using weighted mirrored
+histograms, empirical cumulative distribution function (ECDF) plots, and
+Love plots.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
@@ -306,30 +272,28 @@ medication}
 \hypertarget{study-population}{%
 \subsection{Study population}\label{study-population}}
 
-We aim answer our causal question by fitting an average treatment effect
-among the treated. Our causal question is as follows: Among those who
-take cholesterol lowering medication, does taking this cholesterol
-lowering medication change their systolic blood pressure?
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{nhanes\_data\_selected }\SpecialCharTok{|\textgreater{}}
-  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(log\_age)) }\SpecialCharTok{|\textgreater{}}
-  \FunctionTok{tbl\_summary}\NormalTok{(}
-    \AttributeTok{by =}\NormalTok{ chol\_med\_use) }\SpecialCharTok{|\textgreater{}}
-  \CommentTok{\# add an overall column to the table}
-  \FunctionTok{add\_overall}\NormalTok{(}\AttributeTok{last =} \ConstantTok{TRUE}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4144}}
-  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1802}}
-  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1802}}
-  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2252}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4348}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1739}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1739}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2174}}@{}}
+\caption{\textbf{Table 1. Survey Participant
+Characteristics}}\tabularnewline
 \toprule()
 \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Characteristic}
+\textbf{Taking Cholesterol-lowering Medication}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{No}, N = 21,071
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Yes}, N = 4,433
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Overall}, N = 25,504
+\end{minipage} \\
+\midrule()
+\endfirsthead
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Taking Cholesterol-lowering Medication}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \textbf{No}, N = 21,071
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -339,32 +303,26 @@ lowering medication change their systolic blood pressure?
 \end{minipage} \\
 \midrule()
 \endhead
-Total cholesterol, mg/dL & 192 (166, 221) & 173 (149, 201) & 189 (163,
-218) \\
+\textbf{Total cholesterol, mg/dL} & 192 (166, 221) & 173 (149, 201) &
+189 (163, 218) \\
 Unknown & 237 & 64 & 301 \\
-Systolic blood pressure (SBP), mm Hg & 119 (109, 131) & 129 (117, 142) &
-120 (110, 133) \\
+\textbf{Systolic blood pressure (SBP), mm Hg} & 119 (109, 131) & 129
+(117, 142) & 120 (110, 133) \\
 Unknown & 914 & 171 & 1,085 \\
-Self-reported antihypertensive medication use & 3,475 (17\%) & 2,880
-(65\%) & 6,355 (25\%) \\
-Unknown & 116 & 4 & 120 \\
-Body mass index, kg/m2 & & & \\
-\textless25 & 7,002 (34\%) & 862 (20\%) & 7,864 (31\%) \\
-25 to \textless30 & 6,724 (33\%) & 1,521 (35\%) & 8,245 (33\%) \\
-30 to \textless35 & 3,840 (19\%) & 1,069 (25\%) & 4,909 (20\%) \\
-35+ & 3,093 (15\%) & 871 (20\%) & 3,964 (16\%) \\
-Unknown & 412 & 110 & 522 \\
-Race/ethnicity & & & \\
+\textbf{Race/ethnicity} & & & \\
 Non-Hispanic White & 8,639 (41\%) & 2,320 (52\%) & 10,959 (43\%) \\
 Non-Hispanic Black & 4,430 (21\%) & 840 (19\%) & 5,270 (21\%) \\
 Non-Hispanic Asian & 1,179 (5.6\%) & 244 (5.5\%) & 1,423 (5.6\%) \\
 Hispanic & 5,973 (28\%) & 865 (20\%) & 6,838 (27\%) \\
 Other & 850 (4.0\%) & 164 (3.7\%) & 1,014 (4.0\%) \\
-Gender & & & \\
+\textbf{Gender} & & & \\
 Men & 9,943 (47\%) & 2,356 (53\%) & 12,299 (48\%) \\
 Women & 11,128 (53\%) & 2,077 (47\%) & 13,205 (52\%) \\
-Age at Screening Adjudicated - Recode & 42 (28, 58) & 66 (58, 75) & 47
-(31, 63) \\
+\textbf{Age at Screening Adjudicated - Recode} & 42 (28, 58) & 66 (58,
+75) & 47 (31, 63) \\
+\textbf{Self-reported antihypertensive medication use} & 3,475 (17\%) &
+2,880 (65\%) & 6,355 (25\%) \\
+Unknown & 116 & 4 & 120 \\
 \bottomrule()
 \end{longtable}
 
@@ -404,27 +362,6 @@ mean across exposure groups but also across their respective
 distributions. No changes are required for our model, and we can now
 proceed to estimate our average treatment effect among the treated.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#check the vibes to think about an estimator}
-\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ nhanes\_data }\SpecialCharTok{|\textgreater{}} 
-  \FunctionTok{as.data.frame}\NormalTok{() }\SpecialCharTok{|\textgreater{}} 
-  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{log\_age =} \FunctionTok{log}\NormalTok{(demo\_age\_years)) }\SpecialCharTok{|\textgreater{}}
-  \FunctionTok{select}\NormalTok{(chol\_med\_use, chol\_total, bp\_sys\_mean, bp\_med\_use, cc\_bmi, log\_age, demo\_race, demo\_gender)}
-
-\NormalTok{prop }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(chol\_med\_use }\SpecialCharTok{\textasciitilde{}}\NormalTok{ chol\_total }\SpecialCharTok{+}\NormalTok{ bp\_med\_use }\SpecialCharTok{+}\NormalTok{ cc\_bmi }\SpecialCharTok{+}\NormalTok{ log\_age }\SpecialCharTok{+}\NormalTok{ demo\_race }\SpecialCharTok{+}\NormalTok{ demo\_gender, }
-    \AttributeTok{data =}\NormalTok{ data,}
-    \AttributeTok{family =} \FunctionTok{binomial}\NormalTok{())}
-\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ prop }\SpecialCharTok{|\textgreater{}} 
-  \FunctionTok{augment}\NormalTok{(}\AttributeTok{type.predict =} \StringTok{"response"}\NormalTok{, }\AttributeTok{data =}\NormalTok{ data)  }\SpecialCharTok{|\textgreater{}}
-  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(.resid, .hat, .sigma, .cooksd, .std.resid)) }\SpecialCharTok{|\textgreater{}}
-  \FunctionTok{rename}\NormalTok{(}\StringTok{"prop"} \OtherTok{=} \StringTok{".fitted"}\NormalTok{)}
-\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ data }\SpecialCharTok{|\textgreater{}}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{w\_att =} \FunctionTok{wt\_att}\NormalTok{(prop, chol\_med\_use)) }
-\end{Highlighting}
-\end{Shaded}
-
 \hypertarget{diagnostics}{%
 \subsubsection{Diagnostics}\label{diagnostics}}
 
@@ -438,7 +375,7 @@ proceed to estimate our average treatment effect among the treated.
 \centering
 \includegraphics{final-project_files/figure-latex/fig_diag2-1.pdf}
 \caption{Mirror histogram by whether the participants use cholesterol
-medication}
+medication using ATT weighting}
 \end{figure}
 
 \begin{figure}
@@ -447,8 +384,12 @@ medication}
 \caption{Love plot for covariates}
 \end{figure}
 
+\begin{figure}
+\centering
 \includegraphics{final-project_files/figure-latex/fig_ecdf-1.pdf}
-\includegraphics{final-project_files/figure-latex/fig_ecdf-2.pdf}
+\caption{Empirical cummulative distribution function for numerical
+covariates}
+\end{figure}
 
 \hypertarget{average-treatment-effect-among-the-treated}{%
 \subsection{Average treatment effect among the
@@ -456,10 +397,10 @@ treated}\label{average-treatment-effect-among-the-treated}}
 
 We estimated the average treatment effect of taking cholesterol-lowering
 medication. Our findings indicate that, on average, individuals who take
-cholesterol-lowering medication experience an increase of 9.26 mm Hg in
+cholesterol-lowering medication experience a decrease 3.911 mm Hg in
 their Systolic Blood Pressure (SBP). We are 95 percent confident that
 the average effect of taking this medication on SBP falls within the
-range of at least 8.578 mm Hg to at most 9.941 mm Hg. Additionally, we
+range of at least -4.960 mm Hg to at most -2.863 mm Hg. Additionally, we
 conducted a sensitivity analysis to account for the possibility that our
 Directed Acyclic Graph (DAG) might not include all potential confounding
 variables. In this analysis, we calculated the necessary relationship
@@ -473,22 +414,33 @@ treatment effect. Therefore, it is reasonable to conclude that the
 Average Treatment Effect (ATT) we computed is robust against potential
 confounding factors.
 
-\begin{verbatim}
-## [1] "The point estimate for the ATT is -3.746 with 95% CI (-4.782,-2.71)."
-\end{verbatim}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.5395}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1316}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1579}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1711}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Characteristic}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Beta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{95\% CI}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{p-value}
+\end{minipage} \\
+\midrule()
+\endhead
+Taking a cholesterol-lowering medication & & & \\
+No & --- & --- & \\
+Yes & -3.9 & -5.0, -2.9 & \textless0.001 \\
+\bottomrule()
+\end{longtable}
 
 \hypertarget{sensitivity-analysis}{%
 \subsection{Sensitivity analysis}\label{sensitivity-analysis}}
 
-\begin{verbatim}
-## # A tibble: 3 x 4
-##   effect_observed exposure_confounder_effect confounder_outcome_effect
-##             <dbl>                      <dbl>                     <dbl>
-## 1           -2.71                       0.05                     -54.2
-## 2           -2.71                       0.1                      -27.1
-## 3           -2.71                       0.15                     -18.1
-## # i 1 more variable: n_unmeasured_confounders <dbl>
-\end{verbatim}
+\includegraphics{final-project_files/figure-latex/tab_sensitivity-1.pdf}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
@@ -520,103 +472,6 @@ All code for the analysis can be accessed at \textbf{link github}
 
 Thank Dr.~Lucy D'Agostino McGowan for her guidance and assistance in
 preparing this manuscript.
-
-\hypertarget{sec:1}{%
-\section{Section title}\label{sec:1}}
-
-Text with citations by \citet{heagerty2000time},
-\citep{pepe2003statistical}.
-
-\hypertarget{sec:2}{%
-\subsection{Subsection title}\label{sec:2}}
-
-as required \citep{hoerl1970ridge, zou2005regularization}. Don't forget
-to give each section and subsection a unique label (see Sect.
-\ref{sec:1}).
-
-\hypertarget{paragraph-headings}{%
-\paragraph{Paragraph headings}\label{paragraph-headings}}
-
-Use paragraph headings as needed.
-
-\hypertarget{equations}{%
-\subsection{Equations}\label{equations}}
-
-Here is an equation:
-
-\[ f_{X}(x) = \left(\frac{\alpha}{\beta}\right)\left(\frac{x}{\beta}\right)^{\alpha-1}e^{-\left(\frac{x}{\beta}\right)^{\alpha}}; \alpha,\beta,x > 0 \]
-
-Here is another: \begin{align}
-a^2+b^2=c^2
-\end{align}
-
-Inline equations: \(\sum_{i = 2}^\infty\{\alpha_i^\beta\}\)
-
-\hypertarget{figures-and-tables}{%
-\section{Figures and tables}\label{figures-and-tables}}
-
-\hypertarget{figures-coming-from-r}{%
-\subsection{Figures coming from R}\label{figures-coming-from-r}}
-
-\hypertarget{normal-figure-embedded-in-text}{%
-\paragraph{Normal figure embedded in
-text}\label{normal-figure-embedded-in-text}}
-
-\begin{figure}
-\centering
-\includegraphics{final-project_files/figure-latex/fig2-1.pdf}
-\caption{Output from \texttt{pdf()}}
-\end{figure}
-
-\clearpage
-
-\hypertarget{tables-coming-from-r}{%
-\subsection{Tables coming from R}\label{tables-coming-from-r}}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{print}\NormalTok{(xtable}\SpecialCharTok{::}\FunctionTok{xtable}\NormalTok{(}\FunctionTok{head}\NormalTok{(mtcars)[,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{], }
-\AttributeTok{caption =} \StringTok{"Caption centered under table"}\NormalTok{, }\AttributeTok{label =} \StringTok{"tab1"}\NormalTok{), }
-\AttributeTok{comment =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{timestamp =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{caption.placement =} \StringTok{"top"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{table}[ht]
-\centering
-\caption{Caption centered under table} 
-\label{tab1}
-\begin{tabular}{rrrrr}
-  \hline
- & mpg & cyl & disp & hp \\ 
-  \hline
-Mazda RX4 & 21.00 & 6.00 & 160.00 & 110.00 \\ 
-  Mazda RX4 Wag & 21.00 & 6.00 & 160.00 & 110.00 \\ 
-  Datsun 710 & 22.80 & 4.00 & 108.00 & 93.00 \\ 
-  Hornet 4 Drive & 21.40 & 6.00 & 258.00 & 110.00 \\ 
-  Hornet Sportabout & 18.70 & 8.00 & 360.00 & 175.00 \\ 
-  Valiant & 18.10 & 6.00 & 225.00 & 105.00 \\ 
-   \hline
-\end{tabular}
-\end{table}
-
-Table \ref{tab1} shows these numbers. Some of those numbers are plotted
-in Figure \ref{fig:fig1}.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{head}\NormalTok{(mtcars[,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{])}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##                    mpg cyl disp  hp
-## Mazda RX4         21.0   6  160 110
-## Mazda RX4 Wag     21.0   6  160 110
-## Datsun 710        22.8   4  108  93
-## Hornet 4 Drive    21.4   6  258 110
-## Hornet Sportabout 18.7   8  360 175
-## Valiant           18.1   6  225 105
-\end{verbatim}
 
 
 \bibliographystyle{biom}

@@ -1,13 +1,14 @@
 \begin{figure}
 \centering
-\includegraphics{final-project_files/figure-latex/fig_vizmis-1.pdf}
-\caption{Missing data percentage for selected variables}
+\includegraphics{final-project_files/figure-latex/fig_eda-1.pdf}
+\caption{Mirror histogram by whether the participants use cholesterol
+medication}
 \end{figure}
 \efloatseparator
  
 \begin{figure}
 \centering
-\includegraphics{final-project_files/figure-latex/fig_dag-1.pdf}
+\includegraphics{final-project_files/figure-latex/fig-dag-1.pdf}
 \caption{Causal direct acyclic graph between cholesterol-lowering
 medication and the mean systolic blood pressure}
 \end{figure}
@@ -22,14 +23,6 @@ medication and the mean systolic blood pressure}
  
 \begin{figure}
 \centering
-\includegraphics{final-project_files/figure-latex/fig_eda-1.pdf}
-\caption{Mirror histogram by whether the participants use cholesterol
-medication}
-\end{figure}
-\efloatseparator
- 
-\begin{figure}
-\centering
 \includegraphics{final-project_files/figure-latex/fig_diag1-1.pdf}
 \caption{Mirror histogram of propensity score by treatment group}
 \end{figure}
@@ -39,7 +32,7 @@ medication}
 \centering
 \includegraphics{final-project_files/figure-latex/fig_diag2-1.pdf}
 \caption{Mirror histogram by whether the participants use cholesterol
-medication}
+medication using ATT weighting}
 \end{figure}
 \efloatseparator
  
@@ -52,6 +45,7 @@ medication}
  
 \begin{figure}
 \centering
-\includegraphics{final-project_files/figure-latex/fig2-1.pdf}
-\caption{Output from \texttt{pdf()}}
+\includegraphics{final-project_files/figure-latex/fig_ecdf-1.pdf}
+\caption{Empirical cummulative distribution function for numerical
+covariates}
 \end{figure}
