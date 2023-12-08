@@ -22,7 +22,7 @@ keywords:
 abstract: |
   We investigate the average treatment effect among the treated (ATT) of cholesterol-lowering medication on the mean systolic blood pressure (mm Hg). Using data from the National Health and Nutrition Examination Survey (NHANES), we fit a propensity score model to estimate the ATT among adults living in the United States of America. 
 
-bibliography: bibliography.bib
+bibliography: ref.bib
 output: rticles::biometrics_article
 month: "`r format(Sys.Date(), '%b')`"
 year: "`r format(Sys.Date(), '%Y')`"
@@ -74,34 +74,21 @@ nhanes_data_selected <- nhanes_data |>
 
 # Introduction {#intro}
 
-__overview of bp control and motivate why we need to control it__
-
-Controlling blood pressure (BP) reduces the risk for cardiovascular disease. However, the prevalence of BP control (i.e., systolic BP < 140 and diastolic BP < 90) among US adults with hypertension has decreased since 2013. 
-
-__why we are looking at cholesterol-lowering medication as an exposure__
-
-High blood pressure (hypertension) and high cholesterol are linked. Cholesterol plaque and calcium cause your arteries to become hard and narrow. So, your heart has to strain much harder to pump blood through them. As a result, your blood pressure becomes too high. 
-
-The prescription of both antihypertensive and cholesterol-lowering drugs is generally required for these patients. Doctors often prescribe statin drugs like atorvastatin (Lipitor), rosuvastatin (Crestor, Ezallor) and simvastatin (Zocor, FloLipid) for patients with high cholesterol.
-
-Under the current guidelines:
-
-Normal: Less than 120/80
-Elevated: Systolic between 120-129 and diastolic less than 80
-Stage 1 hypertension: Systolic between 130-139 or diastolic between 80-89
+Controlling blood pressure (BP) reduces the risk for cardiovascular disease. However, the prevalence of BP control (i.e., systolic BP < 140 mmHg and diastolic BP < 90 mmHg) among US adults with hypertension has decreased [@cdc_prevalence_nodate]. In 2017-2018, prevalence of hypertension in the USA was 49.64% while the prevalence of blood control by medication is only 39.64% [@chobufo_prevalence_2020]. Further interventions are needed to help improve the prevalence and hypertension control rates in the USA.
 
 
-Statin (a chemical in cholesterol-lowering medication) have been proven to be effective in minimizing the risk of cardiovascular adverse events. Statins block a substance the liver needs to make cholesterol. Thus statins have the potential to lower blood pressure (BP). In many cases, simultaneously lower blood pressure and cholesterol level
+High blood pressure and high cholesterol often occur at the same time. The prescription of both antihypertensive and cholesterol-lowering drugs is generally required for these patients. It is recommended that doctors prescribe statin drugs like atorvastatin (Lipitor), and simvastatin (Zocor, FloLipid) for patients with high cholesterol or patients with high blood pressure (with or without high cholesterol) [@williams_facing_2020]. [@egan_blood_2013] 
 
+Statins (a chemical in cholesterol-lowering medication) have been proven to minimize the risk of cardiovascular adverse events since it block a substance the liver needs to make cholesterol [@liu_statins_2023]. Thus statins have the potential to lower blood pressure. In many cases, simultaneously lower blood pressure and cholesterol level [@strazzullo_statins_2007]. 
 
-
-__other studies that have look at the same thing__
 
 __explain our dags and why we include thing__
 
+We want to control for demographics since high blood pressure disproportionally 
+
 __add short summary of methods here__
 
-Using a causal analysis approach, we aim to explore whether taking cholesterol-lowering medication have the potential to lower blood pressure. By analyzing the publicly available National Health and Nutrition Examination Survey (NHANES), we will estimate the average treatment effect among those who take  cholesterol-lowering medication. Our primary outcome is mean systolic blood pressure (DBP).
+Using a causal analysis approach, we aim to explore whether taking cholesterol-lowering medication have the potential to lower blood pressure. By analyzing the publicly available National Health and Nutrition Examination Survey (NHANES), we will estimate the average treatment effect among those who take cholesterol-lowering medication. Our exposure is whether or not a person take any cholesterol-loweing medication at the time of the survey. Our primary outcome is mean systolic blood pressure (DBP) at the time of the survey.
 
 __add short summary of results here__
 
@@ -169,16 +156,18 @@ ggdag_adjustment_set(
 
 ### Exploratory data analysis
 
-```{r}
+```{r fig_eda, fig.width = 4, fig.height = 4, fig.cap = "Mirror histogram by whether the participants use cholesterol medication", echo = FALSE, dev = "pdf"}
 nhanes_data |> 
   drop_na() |>
   ggplot(aes(fill = chol_med_use, x = bp_sys_mean)) +
-  geom_mirror_histogram()
+  geom_mirror_histogram() + 
+  labs(fill = "Use cholesterol medication",
+       x = "Mean systolic blood pressure (mmHg)")
 ```
 
 ### Modeling
 
-# Results {$results}
+# Results
 
 ## Study population
 
@@ -226,7 +215,7 @@ data <- data |>
 
 ### Diagnostics
 
-```{r}
+```{r fig_diag1, fig.width = 4, fig.height = 4, fig.cap = "Mirror histogram of propensity score by treatment group", echo = FALSE, dev = "pdf"}
 data |> 
   ggplot(aes(x = prop, 
              group = chol_med_use, 
@@ -242,7 +231,7 @@ data |>
 ```
 
 
-```{r}
+```{r fig_diag2, fig.width = 4, fig.height = 4, fig.cap = "Mirror histogram by whether the participants use cholesterol medication", echo = FALSE, dev = "pdf"}
 data |>
   ggplot(aes(x = prop, fill = chol_med_use)) +
   geom_mirror_histogram(
@@ -259,7 +248,7 @@ data |>
        subtitle = "ATT Weighting")
 ```
 
-```{r}
+```{r fig_love, fig.width = 4, fig.height = 4, fig.cap = "Love plot for covariates", echo = FALSE, dev = "pdf"}
 smds <- tidy_smd(
   data,
   .vars = c(chol_total, bp_med_use, cc_bmi, log_age, demo_race, demo_gender),
@@ -276,7 +265,8 @@ smds |>
 ```
 
 
-```{r}
+```{r fig_ecdf, fig.width = 4, fig.height = 4, fig.cap = "Empirical cummulative distribution function for numerical covariates", echo = FALSE, dev = "pdf"}
+
 data |>
   ggplot(aes(x = chol_total, color = chol_med_use)) +
   geom_ecdf(aes(weights = w_att)) +
@@ -307,7 +297,7 @@ data |>
 We estimated the average treatment effect of taking cholesterol-lowering medication. Our findings indicate that, on average, individuals who take cholesterol-lowering medication experience an increase of 9.26 mm Hg in their Systolic Blood Pressure (SBP). We are 95 percent confident that the average effect of taking this medication on SBP falls within the range of at least 8.578 mm Hg to at most 9.941 mm Hg. Additionally, we conducted a sensitivity analysis to account for the possibility that our Directed Acyclic Graph (DAG) might not include all potential confounding variables. In this analysis, we calculated the necessary relationship between an unmeasured confounder and the change in weight required to shift the lower bound of the confidence interval to the null hypothesis level (5%). We considered exposure confounder effects of sizes 0.05, 0.10, and 0.15, which would necessitate confounder-outcome effects of 172, 85, and 57, respectively, to influence the interval. The smallest of these values, 57, is over 6 times greater than the estimated treatment effect. Therefore, it is reasonable to conclude that the Average Treatment Effect (ATT) we computed is robust against potential confounding factors.
 
 
-```{r tab_reg}
+```{r tab_reg, echo=FALSE}
 outcome_mod <-  lm(bp_sys_mean ~ chol_med_use, data = data, weights = w_att)
 robust_var <- sandwich(outcome_mod)[2, 2]
 point_est <- coef(outcome_mod)[2]
@@ -319,7 +309,7 @@ paste0("The point estimate for the ATT is ", round(point_est,3), " with 95% CI (
 
 ## Sensitivity analysis
 
-```{r tab_sensitivity}
+```{r tab_sensitivity, echo=FALSE}
 tip_coef_with_continuous(
   effect_observed = -2.71, #upper bound of CI
   exposure_confounder_effect = c(0.05, 0.10, 0.15),
@@ -332,6 +322,8 @@ tip_coef_with_continuous(
 ## Limitation
 
 will make lifestyle changes rather than take medication
+
+Even with prescribed medication, the barriers to effective blood control includes those that are under the control of the physician (patients' insufficient education and motivation, reluctance to initiate lifestyle changes or drug treatment) and those that are under the control of the patients () [@dusing_overcoming_2006]
 
 not time sensitive
 

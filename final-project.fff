@@ -1,5 +1,12 @@
 \begin{figure}
 \centering
+\includegraphics{final-project_files/figure-latex/fig_vizmis-1.pdf}
+\caption{Missing data percentage for selected variables}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
 \includegraphics{final-project_files/figure-latex/fig_dag-1.pdf}
 \caption{Causal direct acyclic graph between cholesterol-lowering
 medication and the mean systolic blood pressure}
@@ -10,6 +17,36 @@ medication and the mean systolic blood pressure}
 \centering
 \includegraphics{final-project_files/figure-latex/fig_adjustment-1.pdf}
 \caption{Causal adjustment set}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_eda-1.pdf}
+\caption{Mirror histogram by whether the participants use cholesterol
+medication}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_diag1-1.pdf}
+\caption{Mirror histogram of propensity score by treatment group}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_diag2-1.pdf}
+\caption{Mirror histogram by whether the participants use cholesterol
+medication}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_love-1.pdf}
+\caption{Love plot for covariates}
 \end{figure}
 \efloatseparator
  

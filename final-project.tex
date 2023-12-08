@@ -83,6 +83,17 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
+% From pandoc table feature
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,17 +154,53 @@ control.
 
 \maketitle
 
+talk more about population of dataset add ATT description, what it is
+for a non causal expert
+
 \hypertarget{intro}{%
 \section{Introduction}\label{intro}}
 
 Controlling blood pressure (BP) reduces the risk for cardiovascular
 disease. However, the prevalence of BP control (i.e., systolic BP
-\textless{} 140 and diastolic BP \textless{} 90) among US adults with
-hypertension has decreased since 2013. We invite teams to analyze
-publicly available data from US adults to help identify potential causes
-or correlates of worsening BP control among US adults with hypertension
-over the past decade, as this may allow for development of effective
-interventions to help control BP and prevent cardiovascular disease.
+\textless{} 140 mmHg and diastolic BP \textless{} 90 mmHg) among US
+adults with hypertension has decreased \citep{cdc_prevalence_nodate}. In
+2017-2018, prevalence of hypertension in the USA was 49.64\% while the
+prevalence of blood control by medication is only 39.64\%
+\citep{chobufo_prevalence_2020}. Further interventions are needed to
+help improve the prevalence and hypertension control rates in the USA.
+
+High blood pressure and high cholesterol often occur at the same time.
+The prescription of both antihypertensive and cholesterol-lowering drugs
+is generally required for these patients. It is recommended that doctors
+prescribe statin drugs like atorvastatin (Lipitor), and simvastatin
+(Zocor, FloLipid) for patients with high cholesterol or patients with
+high blood pressure (with or without high cholesterol)
+\citep{williams_facing_2020}. \citep{egan_blood_2013}
+
+Statins (a chemical in cholesterol-lowering medication) have been proven
+to minimize the risk of cardiovascular adverse events since it block a
+substance the liver needs to make cholesterol \citep{liu_statins_2023}.
+Thus statins have the potential to lower blood pressure. In many cases,
+simultaneously lower blood pressure and cholesterol level
+\citep{strazzullo_statins_2007}.
+
+\textbf{explain our dags and why we include thing}
+
+We want to control for demographics since high blood pressure
+disproportionally
+
+\textbf{add short summary of methods here}
+
+Using a causal analysis approach, we aim to explore whether taking
+cholesterol-lowering medication have the potential to lower blood
+pressure. By analyzing the publicly available National Health and
+Nutrition Examination Survey (NHANES), we will estimate the average
+treatment effect among those who take cholesterol-lowering medication.
+Our exposure is whether or not a person take any cholesterol-loweing
+medication at the time of the survey. Our primary outcome is mean
+systolic blood pressure (DBP) at the time of the survey.
+
+\textbf{add short summary of results here}
 
 \hypertarget{methods}{%
 \section{Materials and methods}\label{methods}}
@@ -184,6 +231,12 @@ For this analysis, we had 38977 rows with NA values. We decided to deal
 with this by removing all the na values. We decided this was preferable
 to removing certain columns since we were still left with 20,822 data
 points which is still an extremely large data set.
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_vizmis-1.pdf}
+\caption{Missing data percentage for selected variables}
+\end{figure}
 
 \hypertarget{statistical-methods}{%
 \subsection{Statistical methods}\label{statistical-methods}}
@@ -221,7 +274,7 @@ medication and the mean systolic blood pressure}
 \end{figure}
 
 Given our assumptions, we need to adjust for the following adjustment
-set.
+set. The adjustment is given in Figure @ref(fig:fig\_adjustment).
 
 \begin{figure}
 \centering
@@ -233,11 +286,22 @@ set.
 \subsubsection{Exploratory data
 analysis}\label{exploratory-data-analysis}}
 
+\begin{verbatim}
+## `stat_mirror_count()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_eda-1.pdf}
+\caption{Mirror histogram by whether the participants use cholesterol
+medication}
+\end{figure}
+
 \hypertarget{modeling}{%
 \subsubsection{Modeling}\label{modeling}}
 
-\hypertarget{results-results}{%
-\section{Results \{\$results\}}\label{results-results}}
+\hypertarget{results}{%
+\section{Results}\label{results}}
 
 \hypertarget{study-population}{%
 \subsection{Study population}\label{study-population}}
@@ -246,6 +310,63 @@ We aim answer our causal question by fitting an average treatment effect
 among the treated. Our causal question is as follows: Among those who
 take cholesterol lowering medication, does taking this cholesterol
 lowering medication change their systolic blood pressure?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nhanes\_data\_selected }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(log\_age)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{tbl\_summary}\NormalTok{(}
+    \AttributeTok{by =}\NormalTok{ chol\_med\_use) }\SpecialCharTok{|\textgreater{}}
+  \CommentTok{\# add an overall column to the table}
+  \FunctionTok{add\_overall}\NormalTok{(}\AttributeTok{last =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4144}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1802}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1802}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2252}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Characteristic}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{No}, N = 21,071
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Yes}, N = 4,433
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Overall}, N = 25,504
+\end{minipage} \\
+\midrule()
+\endhead
+Total cholesterol, mg/dL & 192 (166, 221) & 173 (149, 201) & 189 (163,
+218) \\
+Unknown & 237 & 64 & 301 \\
+Systolic blood pressure (SBP), mm Hg & 119 (109, 131) & 129 (117, 142) &
+120 (110, 133) \\
+Unknown & 914 & 171 & 1,085 \\
+Self-reported antihypertensive medication use & 3,475 (17\%) & 2,880
+(65\%) & 6,355 (25\%) \\
+Unknown & 116 & 4 & 120 \\
+Body mass index, kg/m2 & & & \\
+\textless25 & 7,002 (34\%) & 862 (20\%) & 7,864 (31\%) \\
+25 to \textless30 & 6,724 (33\%) & 1,521 (35\%) & 8,245 (33\%) \\
+30 to \textless35 & 3,840 (19\%) & 1,069 (25\%) & 4,909 (20\%) \\
+35+ & 3,093 (15\%) & 871 (20\%) & 3,964 (16\%) \\
+Unknown & 412 & 110 & 522 \\
+Race/ethnicity & & & \\
+Non-Hispanic White & 8,639 (41\%) & 2,320 (52\%) & 10,959 (43\%) \\
+Non-Hispanic Black & 4,430 (21\%) & 840 (19\%) & 5,270 (21\%) \\
+Non-Hispanic Asian & 1,179 (5.6\%) & 244 (5.5\%) & 1,423 (5.6\%) \\
+Hispanic & 5,973 (28\%) & 865 (20\%) & 6,838 (27\%) \\
+Other & 850 (4.0\%) & 164 (3.7\%) & 1,014 (4.0\%) \\
+Gender & & & \\
+Men & 9,943 (47\%) & 2,356 (53\%) & 12,299 (48\%) \\
+Women & 11,128 (53\%) & 2,077 (47\%) & 13,205 (52\%) \\
+Age at Screening Adjudicated - Recode & 42 (28, 58) & 66 (58, 75) & 47
+(31, 63) \\
+\bottomrule()
+\end{longtable}
 
 \hypertarget{propensity-score-model-and-diagnostics}{%
 \subsection{Propensity score model and
@@ -283,6 +404,52 @@ mean across exposure groups but also across their respective
 distributions. No changes are required for our model, and we can now
 proceed to estimate our average treatment effect among the treated.
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#check the vibes to think about an estimator}
+\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ nhanes\_data }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{as.data.frame}\NormalTok{() }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{log\_age =} \FunctionTok{log}\NormalTok{(demo\_age\_years)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(chol\_med\_use, chol\_total, bp\_sys\_mean, bp\_med\_use, cc\_bmi, log\_age, demo\_race, demo\_gender)}
+
+\NormalTok{prop }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(chol\_med\_use }\SpecialCharTok{\textasciitilde{}}\NormalTok{ chol\_total }\SpecialCharTok{+}\NormalTok{ bp\_med\_use }\SpecialCharTok{+}\NormalTok{ cc\_bmi }\SpecialCharTok{+}\NormalTok{ log\_age }\SpecialCharTok{+}\NormalTok{ demo\_race }\SpecialCharTok{+}\NormalTok{ demo\_gender, }
+    \AttributeTok{data =}\NormalTok{ data,}
+    \AttributeTok{family =} \FunctionTok{binomial}\NormalTok{())}
+\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ prop }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{augment}\NormalTok{(}\AttributeTok{type.predict =} \StringTok{"response"}\NormalTok{, }\AttributeTok{data =}\NormalTok{ data)  }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(.resid, .hat, .sigma, .cooksd, .std.resid)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"prop"} \OtherTok{=} \StringTok{".fitted"}\NormalTok{)}
+\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ data }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{w\_att =} \FunctionTok{wt\_att}\NormalTok{(prop, chol\_med\_use)) }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{diagnostics}{%
+\subsubsection{Diagnostics}\label{diagnostics}}
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_diag1-1.pdf}
+\caption{Mirror histogram of propensity score by treatment group}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_diag2-1.pdf}
+\caption{Mirror histogram by whether the participants use cholesterol
+medication}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{final-project_files/figure-latex/fig_love-1.pdf}
+\caption{Love plot for covariates}
+\end{figure}
+
+\includegraphics{final-project_files/figure-latex/fig_ecdf-1.pdf}
+\includegraphics{final-project_files/figure-latex/fig_ecdf-2.pdf}
+
 \hypertarget{average-treatment-effect-among-the-treated}{%
 \subsection{Average treatment effect among the
 treated}\label{average-treatment-effect-among-the-treated}}
@@ -306,8 +473,38 @@ treatment effect. Therefore, it is reasonable to conclude that the
 Average Treatment Effect (ATT) we computed is robust against potential
 confounding factors.
 
+\begin{verbatim}
+## [1] "The point estimate for the ATT is -3.746 with 95% CI (-4.782,-2.71)."
+\end{verbatim}
+
+\hypertarget{sensitivity-analysis}{%
+\subsection{Sensitivity analysis}\label{sensitivity-analysis}}
+
+\begin{verbatim}
+## # A tibble: 3 x 4
+##   effect_observed exposure_confounder_effect confounder_outcome_effect
+##             <dbl>                      <dbl>                     <dbl>
+## 1           -2.71                       0.05                     -54.2
+## 2           -2.71                       0.1                      -27.1
+## 3           -2.71                       0.15                     -18.1
+## # i 1 more variable: n_unmeasured_confounders <dbl>
+\end{verbatim}
+
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
+
+\hypertarget{limitation}{%
+\subsection{Limitation}\label{limitation}}
+
+will make lifestyle changes rather than take medication
+
+Even with prescribed medication, the barriers to effective blood control
+includes those that are under the control of the physician (patients'
+insufficient education and motivation, reluctance to initiate lifestyle
+changes or drug treatment) and those that are under the control of the
+patients () \citep{dusing_overcoming_2006}
+
+not time sensitive
 
 \hypertarget{supplement}{%
 \section{Supplementary information}\label{supplement}}
@@ -423,7 +620,7 @@ in Figure \ref{fig:fig1}.
 
 
 \bibliographystyle{biom}
-\bibliography{bibliography.bib}
+\bibliography{ref.bib}
 
 
 \label{lastpage}
